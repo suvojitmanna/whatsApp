@@ -203,7 +203,7 @@ function initializeSocket(server) {
     });
   });
 
-  // ✅ FIXED (outside connection)
+  // FIXED (outside connection)
   io.socketUserMap = onlineUsers;
 
   return io;

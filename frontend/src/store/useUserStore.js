@@ -4,7 +4,7 @@ import { persist } from "zustand/middleware";
 const useUserStore = create(
   persist(
     (set) => ({
-      user: 1,
+      user: null,
       isAuthenticated: false,
 
       setUser: (userData) =>
@@ -13,13 +13,16 @@ const useUserStore = create(
           isAuthenticated: true,
         }),
 
-      clearUser: () => set({ user: null, isAuthenticated: false }),
+      clearUser: () =>
+        set({
+          user: null,
+          isAuthenticated: false,
+        }),
     }),
     {
       name: "user-storage",
-      getStorage: () => localStorage,
-    },
-  ),
+    }
+  )
 );
 
 export default useUserStore;

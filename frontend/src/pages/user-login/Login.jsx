@@ -23,6 +23,7 @@ import {
   updateUserProfile,
   verifyOtp,
 } from "../../services/url.services.js";
+import { checkUserAuth } from "../../services/user.services.js";
 
 const loginValidationsSchema = yup
   .object()
@@ -165,59 +166,56 @@ const Login = () => {
   };
 
   const OnOtpSubmit = async (data) => {
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      if (!userPhoneData) {
-        throw new Error("Phone or email data is missing");
-      }
-
-      const otpString = data.otp;
-
-      if (!otpString || otpString.length !== 6) {
-        toast.error("Enter valid 6-digit OTP");
-        return;
-      }
-
-      console.log("OTP:", otpString);
-
-      let response;
-
-      if (userPhoneData?.email) {
-        response = await verifyOtp(null, null, otpString, userPhoneData.email);
-      } else {
-        response = await verifyOtp(
-          userPhoneData.phoneNumber,
-          userPhoneData.phoneSuffix,
-          otpString,
-        );
-      }
-
-      console.log("VERIFY RESPONSE:", response.data);
-
-      if (response.data.success) {
-        toast.success("Otp Verified Successfully");
-        console.log(response);
-
-        const user = response.data?.user;
-
-        if (user?.username && user?.profilePicture) {
-          setUser(user);
-          navigate("/");
-          resetLoginStates();
-        } else {
-          setStep(3);
-        }
-      } else {
-        toast.error(response.data.message || "Invalid OTP");
-      }
-    } catch (error) {
-      console.log("OTP ERROR:", error.response?.data || error);
-      toast.error(error.response?.data?.message || "OTP verification failed");
-    } finally {
-      setLoading(false);
+    if (!userPhoneData) {
+      throw new Error("Phone or email data is missing");
     }
-  };
+
+    const otpString = data.otp;
+
+    if (!otpString || otpString.length !== 6) {
+      toast.error("Enter valid 6-digit OTP");
+      return;
+    }
+
+    let response;
+
+    if (userPhoneData?.email) {
+      response = await verifyOtp(null, null, otpString, userPhoneData.email);
+    } else {
+      response = await verifyOtp(
+        userPhoneData.phoneNumber,
+        userPhoneData.phoneSuffix,
+        otpString,
+        null
+      );
+    }
+
+    if (response.data.success) {
+      toast.success("Otp Verified Successfully");
+
+      const user = response.data?.user;
+
+      // Save user in Zustand
+      setUser(user);
+
+      // FIXED CONDITION (simple & reliable)
+      if (user && user.username) {
+        navigate("/"); // make sure this does NOT clear user
+      } else {
+        setStep(3); // go to profile creation
+      }
+    } else {
+      toast.error(response.data.message || "Invalid OTP");
+    }
+  } catch (error) {
+    toast.error(error.response?.data?.message || "OTP verification failed");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -232,6 +230,8 @@ const Login = () => {
   try {
     setLoading(true);
 
+    console.log("STEP 1: Profile submit started");
+
     const formData = new FormData();
 
     formData.append("username", data.username);
@@ -243,16 +243,38 @@ const Login = () => {
       formData.append("profilePicture", selectedAvatar);
     }
 
+    console.log("STEP 2: Sending profile update API...");
+
     await updateUserProfile(formData);
 
+    console.log("STEP 3: Profile updated in DB");
+
+    const result = await checkUserAuth();
+    console.log("STEP 4: checkUserAuth result:", result);
+
+    // FIXED
+    setUser(result.data.user);
+
+    console.log("STEP 5: User set in Zustand:", result.data.user);
+
     toast.success("Welcome back to WhatsApp");
+
+    console.log("STEP 6: Navigating to /");
+
     navigate("/");
-    resetLoginStates();
+
+    console.log("STEP 7: After navigation (before reset)");
+
+    
+
+    console.log("STEP 8: After resetLoginStates");
+
   } catch (error) {
-    console.log(error);
+    console.log("ERROR:", error);
     setError(error.message || "Failed to update profile picture");
   } finally {
     setLoading(false);
+    console.log("STEP 9: Loading finished");
   }
 };
 
