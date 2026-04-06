@@ -1,12 +1,19 @@
 import React, { useRef, useState, useEffect } from "react";
 import { format } from "date-fns";
-import { FaCheckDouble, FaPlus, FaSmile } from "react-icons/fa";
+import {
+  FaCheckDouble,
+  FaPlus,
+  FaRegCopy,
+  FaSmile,
+  FaTrashAlt,
+} from "react-icons/fa";
 import { FiCheck } from "react-icons/fi";
 import { HiDotsVertical } from "react-icons/hi";
 import { RxCross2 } from "react-icons/rx";
 import useOutsideClick from "../../hook/useOutsideClick";
 import EmojiPicker from "emoji-picker-react";
 import { reach } from "yup";
+import { toast } from "react-toastify";
 
 const MessageBuble = ({
   message,
@@ -102,7 +109,7 @@ const MessageBuble = ({
         <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition z-20">
           <button
             onClick={() => setShowOptions((prev) => !prev)}
-            className={`p-1 rounded-full ${
+            className={`p-1 rounded-full cursor-pointer ${
               theme === "dark" ? "text-white" : "text-gray-800"
             }`}
           >
@@ -186,12 +193,66 @@ const MessageBuble = ({
         </div>
 
         {message.reactions && message.reactions.length > 0 && (
-          <div className="mt-1 flex gap-1">
-            {message.reactions.map((reaction, index) => (
-              <span key={index} className="text-sm">
-                {reaction.emoji}
-              </span>
-            ))}
+          <div
+            className={`absolute -bottom-3 flex items-center gap-1 px-1.5 py-1 rounded-full 
+      shadow-sm border transition-transform duration-200 hover:scale-110 z-20
+      ${isUserMessage ? "right-3" : "left-3"} 
+      ${
+        theme === "dark"
+          ? "bg-[#202c33] border-[#3b4a54] text-gray-300"
+          : "bg-gray-100 border-gray-200 text-gray-600"
+      }`}
+          >
+            <div className="flex items-center gap-0.5">
+              {message.reactions.map((reaction, index) => (
+                <span key={index} className="text-[14px] leading-none">
+                  {reaction.emoji}
+                </span>
+              ))}
+              {message.reactions.length > 1 && (
+                <span className="text-[11px] font-semibold ml-0.5">
+                  {message.reactions.length}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+        {showOptions && (
+          <div
+            ref={optionRef}
+            className={`absolute top-8 right-1 z-50 w-36 rounded-xl shadow-lg py-2 text-sm ${
+              theme === "dark"
+                ? "bg-[#1d1f1f] text-white"
+                : "bg-gray-100 text-black"
+            }`}
+          >
+            <button
+              onClick={() => {
+                if (message.contentType === "text") {
+                  navigator.clipboard.writeText(message.content);
+                  toast.success("Copy");
+                }
+                setShowOptions(false);
+              }}
+              className="flex items-center px-4 py-2 gap-3 rounded-lg cursor-pointer"
+            >
+              <FaRegCopy size={14} />
+              <span>Copy</span>
+            </button>
+
+            {isUserMessage && (
+              <button
+                onClick={() => {
+                  deleteMessage(message?._id);
+                  toast.success("Message Deleted");
+                  setShowOptions(false);
+                }}
+                className="flex items-center px-4 py-2 gap-3 rounded-lg text-red-600 cursor-pointer"
+              >
+                <FaTrashAlt className="text-red-600" size={14} />
+                <span>Delete</span>
+              </button>
+            )}
           </div>
         )}
       </div>
