@@ -64,22 +64,34 @@ function initializeSocket(server) {
     });
 
     // 🔹 READ RECEIPT
-    socket.on("message_read", async ({ messageIds, senderId }) => {
-  try {
-    await Message.updateMany(
-      { _id: { $in: messageIds } },
-      { $set: { messageStatus: "read" } }
-    );
+    socket.on("message_read", async ({ messageIds }) => {
+      console.log("🔥 READ EVENT RECEIVED:", messageIds, messageStatus);
+      try {
+        const messages = await Message.find({ _id: { $in: messageIds } });
 
-    io.to(senderId.toString()).emit("message_status_update_bulk", {
-      messageIds,
-      messageStatus: "read",
+        if (!messages.length) return;
+
+        // ✅ get unique senderIds
+        const senderIds = [
+          ...new Set(messages.map((msg) => msg.sender.toString())),
+        ];
+
+        await Message.updateMany(
+          { _id: { $in: messageIds } },
+          { $set: { messageStatus: "read" } },
+        );
+
+        // ✅ emit to all senders
+        senderIds.forEach((senderId) => {
+          io.to(senderId).emit("message_status_update_bulk", {
+            messageIds,
+            messageStatus: "read",
+          });
+        });
+      } catch (error) {
+        console.error("Error marking message as read:", error);
+      }
     });
-
-  } catch (error) {
-    console.error("Error marking message as read:", error);
-  }
-});
 
     // 🔹 TYPING START
     socket.on("typing_start", ({ conversationId, receiverId }) => {

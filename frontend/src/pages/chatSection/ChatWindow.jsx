@@ -14,7 +14,6 @@ import {
   FaPaperPlane,
   FaSmile,
   FaTimes,
-  FaViadeo,
   FaVideo,
 } from "react-icons/fa";
 import { FaEllipsis } from "react-icons/fa6";
@@ -22,6 +21,7 @@ import { object } from "yup";
 import MessageBuble from "./MessageBuble";
 import EmojiPicker from "emoji-picker-react";
 import UseOutsideClick from "../../hook/useOutsideClick";
+import formatTimestamp from "../../utils/formatTime";
 
 const isValidate = (date) => {
   return date instanceof Date && !isNaN(date);
@@ -236,44 +236,53 @@ const ChatWindow = ({ selectedContact, setSelectedContact }) => {
     >
       {/* upper part ui */}
       <div
-        className={`p-4 ${theme === "dark" ? "bg-[#303430] text-white" : "bg-[rgb(229,230,232)] text-gray-600"} flex items-center`}
-      >
-        <button onClick={() => setSelectedContact(null)}>
-          <FaArrowLeft className="mr-2 focus:outline-none cursor-pointer h-full w-full " />
-        </button>
+  className={`p-4 ${
+    theme === "dark"
+      ? "bg-[#303430] text-white"
+      : "bg-[rgb(229,230,232)] text-gray-600"
+  } flex items-center`}
+>
+  <button onClick={() => setSelectedContact(null)}>
+    <FaArrowLeft className="mr-2 focus:outline-none cursor-pointer h-full w-full " />
+  </button>
 
-        <img
-          src={selectedContact?.profilePicture}
-          alt={selectedContact?.username}
-          className="ml-4 w-10 h-10 rounded-full"
-        />
-        <div className="ml-3 flex-grow">
-          <h2 className="font-semibold text-start">
-            {selectedContact?.username}
-          </h2>
-          {isTyping ? (
-            <div>Typing...</div>
-          ) : (
-            <p
-              className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-500"} `}
-            >
-              {online
-                ? "Online"
-                : lastSeen
-                  ? `Last seen ${format(new Date(lastSeen), "HH:mm")}`
-                  : "Offline"}
-            </p>
-          )}
-        </div>
-        <div className="flex items-center space-x-4">
-          <button className="focus:outline-none cursor-pointer">
-            <FaVideo className="h-7 w-7" />
-          </button>
-          <button className="focus:outline-none cursor-pointer">
-            <FaEllipsisV className="h-5 w-5" />
-          </button>
-        </div>
-      </div>
+  <img
+    src={selectedContact?.profilePicture}
+    alt={selectedContact?.username}
+    className="ml-4 w-10 h-10 rounded-full"
+  />
+
+  <div className="ml-3 flex-grow">
+    <h2 className="font-semibold text-start">
+      {selectedContact?.username}
+    </h2>
+
+    {isTyping ? (
+      <div>Typing...</div>
+    ) : (
+      <p
+        className={`text-sm ${
+          theme === "dark" ? "text-gray-400" : "text-gray-500"
+        }`}
+      >
+        {selectedContact?.isOnline
+  ? "Online"
+  : selectedContact?.lastSeen
+    ? `Last seen ${formatTimestamp(selectedContact.lastSeen)}`
+    : "Offline"}
+      </p>
+    )}
+  </div>
+
+  <div className="flex items-center space-x-4">
+    <button className="focus:outline-none cursor-pointer">
+      <FaVideo className="h-7 w-7" />
+    </button>
+    <button className="focus:outline-none cursor-pointer">
+      <FaEllipsisV className="h-5 w-5" />
+    </button>
+  </div>
+</div>
 
       {/* message part seen */}
       <div

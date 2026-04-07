@@ -15,14 +15,14 @@ import { disconnectSocket, initializeSocket } from "./services/chatService.js";
 
 const App = () => {
   const { user } = useUserStore();
-  const { setUser, initSocketListener, cleanup } = useUserStore(); // ✅ fixed name
+  const { setUser, initSocketListener, cleanup } = useUserStore(); // fixed name
 
   useEffect(() => {
     if (user?._id) {
       initializeSocket();
 
       // ❌ removed wrong condition
-      setUser(user); // ✅ fixed function
+      setUser(user); // fixed function
       initSocketListener();
     }
 

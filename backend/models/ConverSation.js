@@ -8,15 +8,16 @@ const conversationSchema = new mongoose.Schema(
       ref: "Message",
     },
     unreadCount: {
-      type: Number, 
+      type: Number,
       default: 0,
     },
   },
   { timestamps: true },
 );
 
-// Model
-const Conversation = mongoose.model("Conversation", conversationSchema);
+// FIXED MODEL EXPORT
+const Conversation =
+  mongoose.models.Conversation ||
+  mongoose.model("Conversation", conversationSchema);
 
-// Export model (IMPORTANT)
 module.exports = Conversation;

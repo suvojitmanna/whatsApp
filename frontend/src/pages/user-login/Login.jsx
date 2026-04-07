@@ -200,10 +200,10 @@ const Login = () => {
 
         console.log("USER AFTER OTP:", user);
 
-        // ✅ Save user
+        // Save user
         setUser(user);
 
-        // ✅ ALWAYS GO TO STEP 3
+        // ALWAYS GO TO STEP 3
         setStep(3);
       } else {
         toast.error(response.data.message || "Invalid OTP");

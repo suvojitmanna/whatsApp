@@ -25,6 +25,7 @@ export const useChatStore = create((set, get) => ({
     socket.off("message_deleted");
     socket.off("message_status_update");
     socket.off("reaction_update");
+    socket.off("message_status_update_bulk");
 
     // Listen for incoming messages
     socket.on("receive_message", (message) => {
@@ -32,6 +33,16 @@ export const useChatStore = create((set, get) => ({
         messages: [...state.messages, message],
       }));
     });
+
+    socket.on("message_status_update_bulk", ({ messageIds, messageStatus }) => {
+  set((state) => ({
+    messages: state.messages.map((msg) =>
+      messageIds.includes(msg._id)
+        ? { ...msg, messageStatus }
+        : msg
+    ),
+  }));
+});
 
     // confirm message sent successfully
     socket.on("message_send", (message) => {
@@ -132,7 +143,7 @@ export const useChatStore = create((set, get) => ({
   fetchConversations: async () => {
     set({ loading: true, error: null });
     try {
-      const { data } = await axiosInstance.get("/chat/conversation"); 
+      const { data } = await axiosInstance.get("/chat/conversation");
       set({ conversations: data, loading: false });
       get().initSocketListener();
       return data;
@@ -314,7 +325,7 @@ export const useChatStore = create((set, get) => ({
     try {
       await axiosInstance.put("/chat/messages/read", {
         messageIds: unreadIds,
-      });
+      });console.log("📩 marking as read:", unreadIds);
 
       set((state) => ({
         messages: state.messages.map((msg) =>
@@ -350,42 +361,42 @@ export const useChatStore = create((set, get) => ({
   },
 
   addReaction: async (messageId, emoji) => {
-  let socket = getSocket();
-  const { currentUser } = get();
+    let socket = getSocket();
+    const { currentUser } = get();
 
-  console.log("🟡 STEP 1 socket:", socket);
-  console.log("🟡 STEP 2 currentUser:", currentUser);
+    console.log("🟡 STEP 1 socket:", socket);
+    console.log("🟡 STEP 2 currentUser:", currentUser);
 
-  if (!socket) {
-    console.log("🔴 socket is NULL → initializing...");
-    socket = initializeSocket();
-  }
+    if (!socket) {
+      console.log("🔴 socket is NULL → initializing...");
+      socket = initializeSocket();
+    }
 
-  console.log("🟢 STEP 3 socket after init:", socket?.id);
+    console.log("🟢 STEP 3 socket after init:", socket?.id);
 
-  if (socket && currentUser) {
-    console.log("🔥 STEP 4 EMIT DATA:", {
-      messageId,
-      emoji,
-      reactionUserId: currentUser._id,
-    });
+    if (socket && currentUser) {
+      console.log("🔥 STEP 4 EMIT DATA:", {
+        messageId,
+        emoji,
+        reactionUserId: currentUser._id,
+      });
 
-    socket.emit("add_reaction", {
-      messageId,
-      emoji,
-      reactionUserId: currentUser._id,
-    });
-  } else {
-    console.log("❌ STEP 5 emit blocked:", { socket, currentUser });
-  }
-},
+      socket.emit("add_reaction", {
+        messageId,
+        emoji,
+        reactionUserId: currentUser._id,
+      });
+    } else {
+      console.log("❌ STEP 5 emit blocked:", { socket, currentUser });
+    }
+  },
 
   startTying: (receiverId) => {
     const { currentConversation } = get();
     const socket = getSocket();
     if (socket && currentConversation && receiverId) {
       socket.emit("typing_start", {
-        conversationId: currentConversation?._id, // ✅ FIXED
+        conversationId: currentConversation?._id, // FIXED
         receiverId,
       });
     }
@@ -396,7 +407,7 @@ export const useChatStore = create((set, get) => ({
     const socket = getSocket();
     if (socket && currentConversation && receiverId) {
       socket.emit("typing_stop", {
-        conversationId: currentConversation?._id, // ✅ FIXED
+        conversationId: currentConversation?._id, // FIXED
         receiverId,
       });
     }

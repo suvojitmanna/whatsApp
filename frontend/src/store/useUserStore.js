@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { getSocket } from "../services/chatService";
-import { useChatStore } from "./chatStore"; // ✅ ADD
+import { useChatStore } from "./chatStore"; // ADD
 
 const useUserStore = create(
   persist(
@@ -15,7 +15,7 @@ const useUserStore = create(
           isAuthenticated: true,
         });
 
-        // ✅ FIX HERE
+        // FIX HERE
         useChatStore.getState().setCurrentUser(userData);
       },
 
@@ -45,8 +45,8 @@ const useUserStore = create(
     }),
     {
       name: "user-storage",
-    }
-  )
+    },
+  ),
 );
 
 export default useUserStore;

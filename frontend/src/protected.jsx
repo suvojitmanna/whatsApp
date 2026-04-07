@@ -15,9 +15,9 @@ export const ProtectedRoute = () => {
 };
 
 export const PublicRoute = () => {
-  const { isAuthenticated, user } = useUserStore(); // ✅ added user
+  const { isAuthenticated, user } = useUserStore(); // added user
 
-  // ✅ FIX: allow login page if profile not completed
+  // FIX: allow login page if profile not completed
   if (isAuthenticated && user?.agreed === true) {
     return <Navigate to="/" replace />;
   }
