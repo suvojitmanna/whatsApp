@@ -150,7 +150,7 @@ function initializeSocket(server) {
       try {
         const userObjectId = new mongoose.Types.ObjectId(reactionUserId);
 
-        // 🔥 REMOVE old reaction from this user
+        // REMOVE old reaction from this user
         await Message.updateOne(
           { _id: messageId },
           {
@@ -158,7 +158,7 @@ function initializeSocket(server) {
           },
         );
 
-        // 🔥 ADD new reaction
+        // ADD new reaction
         await Message.updateOne(
           { _id: messageId },
           {

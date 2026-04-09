@@ -45,7 +45,7 @@ const Settings = () => {
     }
   };
 
-  // 🌫️ Shadow Loader (chat style)
+  // Shadow Loader (chat style)
   const Loader = () => (
     <motion.div
       initial={{ opacity: 0 }}
@@ -70,10 +70,9 @@ const Settings = () => {
             : "bg-gray-100 text-black"
         }`}
       >
-        {/* ✅ IMPORTANT: relative added */}
+        {/* IMPORTANT: relative added */}
         <div className="relative max-w-[1400px] mx-auto w-full flex flex-col md:flex-row my-2 md:my-4 rounded-2xl overflow-hidden shadow-2xl">
-          
-          {/* 🔥 Loader inside card */}
+          {/* Loader inside card */}
           {loading && <Loader />}
 
           {/* SIDEBAR */}
@@ -151,9 +150,7 @@ const Settings = () => {
                       transition-all duration-300 group"
                     >
                       <item.icon className="opacity-70 group-hover:text-[#00a884] transition" />
-                      <span className="text-sm md:text-base">
-                        {item.label}
-                      </span>
+                      <span className="text-sm md:text-base">{item.label}</span>
                     </Link>
                   </motion.div>
                 ))}
@@ -181,9 +178,7 @@ const Settings = () => {
                   onClick={handleLogout}
                   disabled={loading}
                   className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 ${
-                    loading
-                      ? "opacity-60 cursor-not-allowed"
-                      : "cursor-pointer"
+                    loading ? "opacity-60 cursor-not-allowed" : "cursor-pointer"
                   } ${
                     theme === "dark"
                       ? "text-white hover:bg-[#202c33]"

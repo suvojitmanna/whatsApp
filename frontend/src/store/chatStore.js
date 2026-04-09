@@ -29,10 +29,8 @@ export const useChatStore = create((set, get) => ({
 
     // Listen for incoming messages
     socket.on("receive_message", (message) => {
-      set((state) => ({
-        messages: [...state.messages, message],
-      }));
-    });
+  get().receiveMessage(message); // 🔥 FIX
+});
 
     socket.on("message_status_update_bulk", ({ messageIds, messageStatus }) => {
   set((state) => ({
