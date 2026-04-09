@@ -7,22 +7,24 @@ import Home from "./components/homePage.jsx";
 import UserDetails from "./components/userDetails.jsx";
 import Status from "./pages/statusSection/status.jsx";
 import Setting from "./pages/SettingSection/setting.jsx";
+import HelpPage from "./components/helpPage.jsx";
 import useUserStore from "./store/useUserStore.js";
 import { useEffect } from "react";
 import { disconnectSocket, initializeSocket } from "./services/chatService.js";
-
-// ❌ removed Socket import
+import GetStarted from "./pages/helpPage/get_started.jsx";
+import Security from "./pages/helpPage/Security.jsx";
+import ChatMedia from "./pages/helpPage/chat-media.jsx";
+import Privacy from "./components/privacy.jsx";
+import ContactSupport from "./components/contact-support.jsx";
 
 const App = () => {
   const { user } = useUserStore();
-  const { setUser, initSocketListener, cleanup } = useUserStore(); // ✅ fixed name
+  const { setUser, initSocketListener, cleanup } = useUserStore(); // fixed name
 
   useEffect(() => {
     if (user?._id) {
       initializeSocket();
-
-      // ❌ removed wrong condition
-      setUser(user); // ✅ fixed function
+      setUser(user);
       initSocketListener();
     }
 
@@ -30,7 +32,7 @@ const App = () => {
       cleanup();
       disconnectSocket();
     };
-  }, [user, setUser, initSocketListener, cleanup]); // (kept your structure)
+  }, [user, setUser, initSocketListener, cleanup]);
 
   return (
     <>
@@ -48,6 +50,14 @@ const App = () => {
             <Route path="/user-profile" element={<UserDetails />} />
             <Route path="/status" element={<Status />} />
             <Route path="/setting" element={<Setting />} />
+          </Route>
+          <Route element={<ProtectedRoute />}>
+            <Route path="/help" element={<HelpPage />} />
+            <Route path="/help/get-started" element={<GetStarted />} />
+            <Route path="/help/security" element={<Security />} />
+            <Route path="/help/chat-media" element={<ChatMedia />} />
+            <Route path="/help/privacy" element={<Privacy />} />
+            <Route path="/help/contact-support" element={<ContactSupport />} />
           </Route>
         </Routes>
       </BrowserRouter>

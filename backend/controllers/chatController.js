@@ -1,6 +1,6 @@
 const { uploadFileToCloudinary } = require("../config/cloudinary");
 const response = require("../utils/responseHandeler.js");
-const Message = require("../models/Message.js");
+const Message = require("../models/message.js");
 const Conversation = require("../models/conversation.js");
 
 exports.sendMessage = async (req, res) => {
@@ -126,7 +126,7 @@ exports.getMessages = async (req, res) => {
     const messages = await Message.find({ conversation: conversationId })
       .populate("sender", "username profilePicture")
       .populate("receiver", "username profilePicture")
-      .populate("reactions.userId", "username profilePicture") // ✅ ADD THIS
+      .populate("reactions.userId", "username profilePicture") // ADD THIS
       .sort({ createdAt: 1 });
 
     await Message.updateMany(

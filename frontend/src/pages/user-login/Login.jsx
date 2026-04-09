@@ -200,10 +200,10 @@ const Login = () => {
 
         console.log("USER AFTER OTP:", user);
 
-        // ✅ Save user
+        // Save user
         setUser(user);
 
-        // ✅ ALWAYS GO TO STEP 3
+        // ALWAYS GO TO STEP 3
         setStep(3);
       } else {
         toast.error(response.data.message || "Invalid OTP");
@@ -283,6 +283,20 @@ const Login = () => {
 
     if (value && index < 5) {
       document.getElementById(`otp-${index + 1}`).focus();
+    }
+  };
+
+  const handleKeyDown = (index, e) => {
+    // If user presses Backspace and the current box is empty
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      // 1. Focus the previous box
+      const prevInput = document.getElementById(`otp-${index - 1}`);
+      prevInput?.focus();
+
+      // 2. Clear the previous box's value
+      const newOtp = [...otp];
+      newOtp[index - 1] = "";
+      setOtp(newOtp);
     }
   };
 
@@ -438,7 +452,7 @@ const Login = () => {
                     const onlyNumbers = e.target.value.replace(/\D/g, "");
                     setPhoneNumber(onlyNumbers);
                   }}
-                  className={`w-2/3 px-4 py-2 border ${theme === "dark" ? "bg-gray-700 bg-gray-600 text-white" : "bg-white border-gray-300 "} rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 ${loginErrors.phoneNumber ? "border-red-500" : ""}`}
+                  className={`w-2/3 px-4 py-2 border text-black ${theme === "dark" ? "bg-gray-700 text-white" : "bg-white border-gray-300 "} rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 ${loginErrors.phoneNumber ? "border-red-500" : ""}`}
                 />
               </div>
               {loginErrors.phoneNumber && (
@@ -480,8 +494,8 @@ const Login = () => {
             </div>
             <button
               type="submit"
-              disabled={loading}
-              className="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+              disabled={loading || (!phoneNumber && !email)}
+              className="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
             >
               {loading ? (
                 <>
@@ -492,10 +506,20 @@ const Login = () => {
                 "Send OTP"
               )}
             </button>
+            <p
+              onClick={() => navigate("/help")}
+              className={`text-sm text-right cursor-pointer transition underline ${theme === "dark" ? "text-gray-400 hover:text-green-400" : "text-gray-600 hover:text-green-600"}`}
+            >
+              Need Help?
+            </p>
           </form>
         )}
         {step === 2 && (
-          <form onSubmit={handleOtpSubmit(OnOtpSubmit)} className="space-y-4">
+          <form
+            onSubmit={handleOtpSubmit(OnOtpSubmit)}
+            className="space-y-4"
+            typeof="number"
+          >
             <p
               className={`text-center ${
                 theme === "dark" ? "text-gray-300" : "text-black"
@@ -506,22 +530,24 @@ const Login = () => {
               {userPhoneData.phoneNumber && userPhoneData?.phoneNumber}
             </p>
 
-            <div className="flex justify-between">
+            <div className="flex justify-between gap-2">
               {otp.map((digit, index) => (
                 <input
                   key={index}
                   id={`otp-${index}`}
                   type="text"
                   maxLength={1}
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   value={digit}
-                  onChange={(e) => handleOtpChange(index, e.target.value)}
-                  className={`w-12 h-12 text-center text-black border ${
-                    theme === "dark"
-                      ? "bg-gray-700 border-gray-600 text-white"
-                      : "bg-white border-gray-300"
-                  } rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 ${
-                    otpErrors.otp ? "border-red-500" : ""
-                  }`}
+                  onChange={(e) => {
+                    if (/^[0-9]?$/.test(e.target.value)) {
+                      handleOtpChange(index, e.target.value);
+                    }
+                  }}
+                  onFocus={(e) => e.target.select()}
+                  onKeyDown={(e) => handleKeyDown(index, e)}
+                  className={`w-12 h-12 text-center text-xl font-bold border transition-all rounded-xl outline-none${theme === "dark" ? "bg-[#202c33] border-gray-700 text-white focus:ring-2 focus:ring-green-500" : "bg-white border-gray-300 text-black focus:ring-2 focus:ring-green-600 shadow-sm"} ${otpErrors.otp ? "border-red-500" : ""}`}
                 />
               ))}
             </div>
@@ -534,8 +560,8 @@ const Login = () => {
 
             <button
               type="submit"
-              disabled={loading}
-              className="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+              disabled={loading || otp.join("").length < 6}
+              className="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
             >
               {loading ? (
                 <>
@@ -550,7 +576,7 @@ const Login = () => {
             <button
               type="button"
               onClick={handleBack}
-              className={`w-full mt-2 ${
+              className={`w-full mt-2 cursor-pointer ${
                 theme === "dark"
                   ? "bg-gray-700 text-gray-300"
                   : "bg-gray-200 text-gray-700"

@@ -4,21 +4,22 @@ import useUserStore from "../store/useUserStore";
 let socket = null;
 
 export const initializeSocket = () => {
-  if (socket) return socket;
+  if (socket) {
+    socket.disconnect(); // force fresh connection
+  }
 
   const BACKEND_URL = import.meta.env.VITE_API_URL;
 
   socket = io(BACKEND_URL, {
     withCredentials: true,
-    transports: ["websocket"],
+    transports: ["websocket", "polling"], // improved
     reconnectionAttempts: 5,
     reconnectionDelay: 1000,
   });
 
   socket.on("connect", () => {
     console.log("✅ Connected:", socket.id);
-
-    emitUserConnected(); // ✅ clean separation
+    emitUserConnected();
   });
 
   socket.on("disconnect", (reason) => {
@@ -32,7 +33,7 @@ export const initializeSocket = () => {
   return socket;
 };
 
-// ✅ IMPORTANT: separate function (fixes refresh/login issue)
+// IMPORTANT: separate function (fixes refresh/login issue)
 export const emitUserConnected = () => {
   if (!socket) return;
 
