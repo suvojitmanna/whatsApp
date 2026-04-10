@@ -113,7 +113,7 @@ const ChatWindow = ({ selectedContact, setSelectedContact }) => {
     if (file) {
       setSelectedFile(file);
       setShowFileMenu(false);
-      if (file.type.startsWith("image/")) {
+      if (file.type.startsWith("image/") || file.type.startsWith("video/")) {
         setFilePreview(URL.createObjectURL(file));
       }
     }
@@ -224,12 +224,12 @@ const ChatWindow = ({ selectedContact, setSelectedContact }) => {
 
   // Close on outside click
   useOutsideClick(emojiPickerRef, () => {
-  if (showEmojiPicker) setShowEmojiPicker(false);
-});
+    if (showEmojiPicker) setShowEmojiPicker(false);
+  });
 
-useOutsideClick(fileMenuRef, () => {
-  if (showFileMenu) setShowFileMenu(false);
-});
+  useOutsideClick(fileMenuRef, () => {
+    if (showFileMenu) setShowFileMenu(false);
+  });
   return (
     <div
       className={`flex h-screen w-full flex-col {theme === "dark" ? "bg-[#303430] text-white" : "bg-[rgb(230,235,240)] text-gray-600"}`}
@@ -351,11 +351,20 @@ useOutsideClick(fileMenuRef, () => {
       {/* file */}
       {filePreview && (
         <div className="relative p-2">
-          <img
-            src={filePreview}
-            alt="file-preview"
-            className="w-80 object-cover rounded shadow-lg mx-auto"
-          />
+          {selectedFile?.type.startsWith("video/") ? (
+            <video
+              src={filePreview}
+              controls
+              className="w-80 object-cover rounded shadow-lg mx-auto "
+            />
+          ) : (
+            <img
+              src={filePreview}
+              alt="file-preview"
+              className="w-80 object-cover rounded shadow-lg mx-auto"
+            />
+          )}
+
           <button
             onClick={() => {
               setSelectedFile(null);
