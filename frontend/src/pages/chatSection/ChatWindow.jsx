@@ -6,12 +6,14 @@ import { isToday, isYesterday, format } from "date-fns";
 import whatsappImage from "../../assets/whatsapp_image.png";
 import {
   FaArrowLeft,
+  FaEllipsisH,
   FaEllipsisV,
   FaFile,
   FaImage,
   FaLock,
   FaPaperclip,
   FaPaperPlane,
+  FaPhone,
   FaSmile,
   FaTimes,
   FaVideo,
@@ -218,6 +220,23 @@ const ChatWindow = ({ selectedContact, setSelectedContact }) => {
     }
   };
 
+  const handleAudioCall = () => {
+    if (selectedContact && online) {
+      const { initiateCall } = useVideoCallStore.getState();
+
+      const avatar = selectedContact?.profilePicture;
+
+      initiateCall(
+        selectedContact?._id,
+        selectedContact?.username,
+        avatar,
+        "audio",
+      );
+    } else {
+      alert("User is offline. Cannot initiate the call");
+    }
+  };
+
   if (!selectedContact) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center mx-auto h-screen text-center">
@@ -297,7 +316,9 @@ const ChatWindow = ({ selectedContact, setSelectedContact }) => {
             )}
           </div>
 
+          {/* Calling Button */}
           <div className="flex items-center space-x-4">
+            {/* VIDEO CALL */}
             <button
               className="focus:outline-none cursor-pointer"
               onClick={handleVideoCall}
@@ -305,8 +326,18 @@ const ChatWindow = ({ selectedContact, setSelectedContact }) => {
             >
               <FaVideo className="h-7 w-7 text-green-500 hover:text-green-600" />
             </button>
+
+            {/* AUDIO CALL */}
+            <button
+              className="focus:outline-none cursor-pointer"
+              onClick={handleAudioCall}
+              title={online ? "Start audio call" : "user is offline"}
+            >
+              <FaPhone className="h-5 w-5 text-green-500 hover:text-green-600" />
+            </button>
+
             <button className="focus:outline-none cursor-pointer">
-              <FaEllipsisV className="h-5 w-5" />
+              <FaEllipsisH className="h-5 w-5" />
             </button>
           </div>
         </div>
