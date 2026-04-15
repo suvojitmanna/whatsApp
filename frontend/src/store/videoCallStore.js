@@ -96,17 +96,17 @@ const useVideoCallStore = create(
     },
 
     toggleAudio: () => {
-  const { localStream, isAudioEnabled } = get();
-  if (!localStream) return;
+      const { localStream, isAudioEnabled } = get();
+      if (!localStream) return;
 
-  const enabled = !isAudioEnabled;
+      const enabled = !isAudioEnabled;
 
-  localStream.getAudioTracks().forEach(track => {
-    track.enabled = enabled;
-  });
+      localStream.getAudioTracks().forEach((track) => {
+        track.enabled = enabled;
+      });
 
-  set({ isAudioEnabled: enabled });
-},
+      set({ isAudioEnabled: enabled });
+    },
 
     endCall: () => {
       const { localStream, peerConnection } = get();

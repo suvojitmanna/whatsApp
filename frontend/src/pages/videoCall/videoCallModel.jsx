@@ -8,11 +8,13 @@ import {
   FaPhoneSlash,
   FaTimes,
   FaVideo,
+  FaVideoSlash,
 } from "react-icons/fa";
 
 const VideoCallModel = ({ socket }) => {
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
+  const [callTime, setCallTime] = React.useState(0);
 
   const {
     currentCall,
@@ -56,7 +58,6 @@ const VideoCallModel = ({ socket }) => {
   };
 
   //Memorize display the user info and it is prevent the unnecessary re-render
-
   const displayInfo = useMemo(() => {
     if (incomingCall && !isCallActive) {
       return {
@@ -94,6 +95,30 @@ const VideoCallModel = ({ socket }) => {
       remoteVideoRef.current.srcObject = remoteStream;
     }
   }, [remoteStream]);
+
+  //Timer function
+  useEffect(() => {
+    let interval;
+
+    if (callStatus === "connected") {
+      interval = setInterval(() => {
+        setCallTime((prev) => prev + 1);
+      }, 1000);
+    }
+
+    return () => clearInterval(interval);
+  }, [callStatus]);
+
+  useEffect(() => {
+    if (
+      callStatus === "failed" ||
+      callStatus === "rejected" ||
+      callStatus === "calling" ||
+      !isCallActive
+    ) {
+      setCallTime(0);
+    }
+  }, [callStatus, isCallActive]);
 
   //Initialize media stream
   const InitializeMedia = async (video = true) => {
@@ -143,11 +168,11 @@ const VideoCallModel = ({ socket }) => {
     // handle remote stream
     pc.ontrack = (event) => {
       if (event.streams && event.streams[0]) {
-  setRemoteStream(event.streams[0]);
-} else {
-  const stream = new MediaStream([event.track]);
-  setRemoteStream(stream);
-}
+        setRemoteStream(event.streams[0]);
+      } else {
+        const stream = new MediaStream([event.track]);
+        setRemoteStream(stream);
+      }
     };
 
     pc.onconnectionstatechange = () => {
@@ -241,7 +266,9 @@ const VideoCallModel = ({ socket }) => {
     endCall();
   };
 
+  //Handle end call
   const handleEndCall = () => {
+    setCallTime(0);
     const participantId = currentCall?.participantId || incomingCall?.callerId;
     const callId = currentCall?.callId || incomingCall?.callId;
 
@@ -253,6 +280,13 @@ const VideoCallModel = ({ socket }) => {
     }
 
     endCall();
+  };
+
+  // Time format function
+  const formatTime = (seconds) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, "0")}`;
   };
 
   // socket event listeners
@@ -366,59 +400,87 @@ const VideoCallModel = ({ socket }) => {
     isCallActive || callStatus === "calling" || callStatus === "connecting";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-2xl p-4">
       <div
-        className={`relative w-full h-full max-w-4xl max-h-3xl rounded-lg overflow-hidden ${theme === "dark" ? "bg-gray-700" : "bg-gray-900"}`}
+        className={`relative w-full h-full max-w-5xl max-h-[90vh] rounded-3xl overflow-hidden border border-white/10 shadow-[0_20px_80px_rgba(0,0,0,0.6)] ${
+          theme === "dark"
+            ? "bg-gradient-to-br from-gray-900/90 via-black/80 to-gray-900/90"
+            : "bg-white/90"
+        }`}
       >
+        {/*BACKGROUND GLOW */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute w-[500px] h-[500px] bg-emerald-500/20 blur-[120px] rounded-full top-[-100px] left-[-100px] animate-pulse"></div>
+          <div className="absolute w-[400px] h-[400px] bg-blue-500/20 blur-[120px] rounded-full bottom-[-100px] right-[-100px] animate-pulse"></div>
+        </div>
+
+        {/* ================= INCOMING CALL ================= */}
         {incomingCall && !isCallActive && (
-          <div className="flex flex-col items-center justify-center h-full p-8">
-            <div className="text-center mb-8">
-              <div className="w-32 h-32 rounded-full bg-gray-300 mx-auto mb-4 overflow-hidden ">
-                <img
-                  src={displayInfo?.avatar}
-                  alt={displayInfo?.name}
-                  className="w-full h-full object-cover"
-                />
-                <h2
-                  className={`text-2xl font-semibold mb-2 ${theme === "dark" ? "text-white" : "text-gray-900"}`}
-                >
-                  {displayInfo?.name}
-                </h2>
-                <p
-                  className={`text-lg ${theme === "dark" ? "text-gray-300" : "text-gray-600"}`}
-                >
-                  Incoming {callType} call...
-                </p>
+          <div className="flex flex-col items-center justify-center h-full p-8 animate-in fade-in zoom-in duration-500">
+            <div className="text-center mb-12">
+              {/* Avatar Glow */}
+              <div className="relative inline-block mb-6">
+                <div className="absolute -inset-2 bg-gradient-to-r from-emerald-400 to-blue-500 rounded-full blur-xl opacity-30 animate-pulse"></div>
+                <div className="relative w-36 h-36 rounded-full border-4 border-white/20 overflow-hidden shadow-xl">
+                  <img
+                    src={displayInfo?.avatar}
+                    alt={displayInfo?.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
               </div>
-              <div className={`flex space-x-6`}>
-                <button
-                  onClick={handleRejectCall}
-                  className="w-16 h-16 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center text-white transition-colors"
-                >
+
+              <h2 className="text-3xl font-bold text-black mb-2">
+                {displayInfo?.name}
+              </h2>
+
+              <p className="text-emerald-400 text-xs tracking-[0.3em] uppercase animate-pulse">
+                Incoming {callType} call...
+              </p>
+            </div>
+
+            <div className="flex space-x-12">
+              {/* Reject */}
+              <button
+                onClick={handleRejectCall}
+                className="group flex flex-col items-center gap-2 cursor-pointer"
+              >
+                <div className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-red-500/40 transition-all duration-200 hover:scale-110 active:scale-90">
                   <FaPhoneSlash className="w-6 h-6" />
-                </button>
-                <button
-                  onClick={handleAnswerCall}
-                  className="w-16 h-16 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center text-white transition-colors"
-                >
+                </div>
+                <span className="text-xs text-gray-400">Decline</span>
+              </button>
+
+              {/* Accept */}
+              <button
+                onClick={handleAnswerCall}
+                className="group flex flex-col items-center gap-2 cursor-pointer"
+              >
+                <div className="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-emerald-500/40 transition-all duration-200 hover:scale-110 active:scale-90">
                   <FaVideo className="w-6 h-6" />
-                </button>
-              </div>
+                </div>
+                <span className="text-xs text-gray-400">Accept</span>
+              </button>
             </div>
           </div>
         )}
 
+        {/* ================= ACTIVE CALL ================= */}
         {shouldShowActiveCall && (
-          <div className="relative w-full h-full">
+          <div className="relative w-full h-full bg-black">
+            {/* Remote Video */}
             {callType === "video" && (
               <video
                 ref={remoteVideoRef}
                 autoPlay
                 playsInline
-                controls
-                className={`w-full h-full object-cover bg-gray-800 ${remoteStream ? "block" : "hidden"}`}
+                className={`w-full h-full object-cover transition-all duration-1000 ${
+                  remoteStream ? "opacity-100 scale-100" : "opacity-0 scale-110"
+                }`}
               />
             )}
+
+            {/* AUDIO (IMPORTANT) */}
             <audio
               autoPlay
               ref={(audio) => {
@@ -427,96 +489,137 @@ const VideoCallModel = ({ socket }) => {
                 }
               }}
             />
+
+            {/* Avatar fallback */}
             {(!remoteStream || callType !== "video") && (
-              <div className="w-full h-full bg-gray-800 flex items-center justify-center ">
+              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-gray-900 to-black">
                 <div className="text-center">
-                  <div className="w-32 h-32 rounded-full bg-gray-600 mx-auto mb-4 overflow-hidden">
+                  <div className="relative w-32 h-32 mx-auto mb-6">
                     <img
                       src={displayInfo.avatar}
-                      alt={displayInfo?.name}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full rounded-full object-cover"
                     />
+                    {isAudioEnabled && (
+                      <div className="absolute inset-0 rounded-full border-2 border-emerald-400 animate-ping opacity-40"></div>
+                    )}
                   </div>
-                  <p className="text-white text-xl">
-                    {callStatus === "calling"
-                      ? `calling ${displayInfo?.name}...`
-                      : callStatus === "connecting"
-                        ? "connecting..."
-                        : callStatus === "connected"
-                          ? displayInfo?.name
-                          : callStatus === "failed"
-                            ? "connection failed"
-                            : displayInfo?.name}
+
+                  <p className="text-white text-xl font-semibold">
+                    {displayInfo?.name}
+                  </p>
+                  <p className="text-white/40 text-sm mt-2 uppercase tracking-[0.3em]">
+                    {callStatus}
                   </p>
                 </div>
               </div>
             )}
 
+            {/* Local Video */}
             {callType === "video" && localStream && (
-              <div className="absolute top-4 right-4 w-48 h-36 bg-gray-800 rounded-lg overflow-hidden border-2 border-white">
+              <div className="absolute top-6 right-6 w-40 h-52 rounded-2xl overflow-hidden border border-white/20 shadow-2xl">
                 <video
                   ref={localVideoRef}
                   autoPlay
                   playsInline
                   muted
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover scale-x-[-1]"
                 />
               </div>
             )}
-            <div className="absolute top-4 left-4">
-              <div
-                className={`px-4 py-2 rounded-full ${theme === "dark" ? "bg-gray-800 " : " bg-white"} bg-opacity-75 `}
-              >
-                <p
-                  className={`text-sm ${theme === "dark" ? "text-white" : "text-gray-900"}`}
-                >
-                  {callStatus === "connected" ? "connected" : callStatus}
-                </p>
+
+            {/* Status */}
+            <div className="absolute top-6 left-6">
+              <div className="px-4 py-2 rounded-2xl bg-black/30 backdrop-blur-xl border border-white/10 shadow-2xl transition-all duration-500">
+                <div className="flex items-center gap-3">
+                  {/* Live Status Indicator */}
+                  <div className="flex items-center gap-2">
+                    {callStatus === "connected" && (
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                      </span>
+                    )}
+                    <p
+                      className={`text-[10px] font-bold uppercase tracking-[0.2em] ${callStatus === "connected" ? "text-red-400" : "text-white/70"}`}
+                    >
+                      {callStatus === "connected" ? "Live" : callStatus}
+                    </p>
+                  </div>
+
+                  {/* Divider - Only shows when connected */}
+                  {callStatus === "connected" && (
+                    <div className="h-3 w-[1px] bg-white/20"></div>
+                  )}
+
+                  {/* Call Timer */}
+                  {callStatus === "connected" && (
+                    <p className="text-[11px] text-white/90 font-mono font-medium tabular-nums tracking-wider">
+                      {formatTime(callTime)}
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
-            <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-              <div className="flex space-x-4">
-                {callType === "video" && (
+
+            {/* Controls */}
+            <div className="absolute bottom-10 left-1/2 -translate-x-1/2">
+              <div className="flex items-center space-x-6 px-8 py-4 rounded-3xl bg-white/5 backdrop-blur-2xl border border-white/10 shadow-[0_8px_40px_rgba(0,0,0,0.5)]">
+                {/*When NOT connected → only End Call */}
+                {callStatus !== "connected" ? (
                   <button
-                    className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${isVideoEnabled ? "bg-gray-600 hover:bg-gray-700 text-white" : "bg-red-500 hover:bg-red-600 text-white"}`}
+                    onClick={handleEndCall}
+                    className="w-14 h-14 bg-red-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-red-500/50 transition-all duration-200 hover:scale-110 active:scale-90 cursor-pointer"
                   >
-                    {isVideoEnabled ? (
-                      <FaVideo className="h-5 w-5" />
-                    ) : (
-                      <FaPhoneSlash className="h-5 w-5" />
-                    )}
+                    <FaPhoneSlash className="w-7 h-7" />
                   </button>
+                ) : (
+                  <>
+                    {/* Video */}
+                    {callType === "video" && (
+                      <button
+                        onClick={toggleVideo}
+                        className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-90 cursor-pointer ${
+                          isVideoEnabled
+                            ? "bg-white/10 text-white"
+                            : "bg-red-500 text-white"
+                        }`}
+                      >
+                        {isVideoEnabled ? (
+                          <FaVideo className="size-5" />
+                        ) : (
+                          <FaVideoSlash className="size-5" />
+                        )}
+                      </button>
+                    )}
+
+                    {/* Audio */}
+                    <button
+                      onClick={toggleAudio}
+                      className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-90 cursor-pointer ${
+                        isAudioEnabled
+                          ? "bg-white/10 text-white"
+                          : "bg-red-500 text-white"
+                      }`}
+                    >
+                      {isAudioEnabled ? (
+                        <FaMicrophone className="size-5" />
+                      ) : (
+                        <FaMicrophoneSlash className="size-5" />
+                      )}
+                    </button>
+
+                    {/* End */}
+                    <button
+                      onClick={handleEndCall}
+                      className="w-14 h-14 bg-red-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-red-500/50 transition-all duration-200 hover:scale-110 active:scale-90 cursor-pointer"
+                    >
+                      <FaPhoneSlash className="w-7 h-7" />
+                    </button>
+                  </>
                 )}
-
-                <button
-                  onClick={toggleAudio}
-                  className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${isAudioEnabled  ? "bg-gray-600 hover:bg-gray-700 text-white" : "bg-red-500 hover:bg-red-600 text-white"}`}
-                >
-                  {isAudioEnabled ? (
-                    <FaMicrophone className="h-5 w-5" />
-                  ) : (
-                    <FaMicrophoneSlash className="h-5 w-5" />
-                  )}
-                </button>
-
-                <button
-                  onClick={handleEndCall}
-                  className="w-16 h-16 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center text-white transition-colors"
-                >
-                  <FaPhoneSlash className="w-6 h-6" />
-                </button>
               </div>
             </div>
           </div>
-        )}
-
-        {callStatus === "calling" && (
-          <button
-            onClick={handleEndCall}
-            className="absolute top-4 right-4 w-8 h-16 bg-gray-500 hover:bg-gray-600 rounded-full flex items-center justify-center text-white transition-colors"
-          >
-            <FaTimes className="w-6 h-6" />
-          </button>
         )}
       </div>
     </div>
