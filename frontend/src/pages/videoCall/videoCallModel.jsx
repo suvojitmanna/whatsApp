@@ -116,11 +116,6 @@ const VideoCallModel = ({ socket }) => {
   const createPeerConnection = (stream, role) => {
     const pc = new RTCPeerConnection(rtcConfiguration);
 
-    //close old connection (safe, no logic change)
-    if (peerConnection) {
-      peerConnection.close();
-    }
-
     if (stream) {
       stream.getTracks().forEach((track) => {
         console.log(`${role} adding ${track.kind} track`, track.id.slice(0, 8));
@@ -147,10 +142,12 @@ const VideoCallModel = ({ socket }) => {
 
     // handle remote stream
     pc.ontrack = (event) => {
-      setRemoteStream((prev) => {
-        if (prev) return prev;
-        return event.streams?.[0] || new MediaStream([event.track]);
-      });
+      if(event.stream && event.streams[0]){
+        setRemoteStream(event.streams[0])
+      }else{
+        const stream = new MediaStream([event.track])
+        setRemoteStream(stream)
+      }
     };
 
     pc.onconnectionstatechange = () => {
@@ -200,20 +197,6 @@ const VideoCallModel = ({ socket }) => {
     }
   };
 
-  const handleEndCall = () => {
-    const participantId = currentCall?.participantId || incomingCall?.callerId;
-    const callId = currentCall?.callId || incomingCall?.callId;
-
-    if (participantId && callId && socket?.connected) {
-      socket.emit("end_call", {
-        callId: callId,
-        participantId: participantId,
-      });
-    }
-
-    endCall();
-  };
-
   //Receiver : Answer Call
   const handleAnswerCall = async () => {
     try {
@@ -258,6 +241,20 @@ const VideoCallModel = ({ socket }) => {
     endCall();
   };
 
+  const handleEndCall = () => {
+    const participantId = currentCall?.participantId || incomingCall?.callerId;
+    const callId = currentCall?.callId || incomingCall?.callId;
+
+    if (participantId && callId) {
+      socket.emit("end_call", {
+        callId: callId,
+        participantId: participantId,
+      });
+    }
+
+    endCall();
+  };
+  
   // socket event listeners
   useEffect(() => {
     if (!socket) return;
