@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useLoginStore from "../../store/useLoginStore";
 import countries from "../../utils/countries";
 import * as yup from "yup";
@@ -274,29 +274,39 @@ const Login = () => {
   };
 
   const handleOtpChange = (index, value) => {
+    if (!/^\d?$/.test(value)) return;
+
     const newOtp = [...otp];
 
+    // Replace value (important for overwrite)
     newOtp[index] = value;
     setOtp(newOtp);
 
     setOtpValue("otp", newOtp.join(""));
 
+    // Move forward
     if (value && index < 5) {
-      document.getElementById(`otp-${index + 1}`).focus();
+      const nextInput = document.getElementById(`otp-${index + 1}`);
+      nextInput?.focus();
     }
   };
 
   const handleKeyDown = (index, e) => {
-    // If user presses Backspace and the current box is empty
-    if (e.key === "Backspace" && !otp[index] && index > 0) {
-      // 1. Focus the previous box
-      const prevInput = document.getElementById(`otp-${index - 1}`);
-      prevInput?.focus();
-
-      // 2. Clear the previous box's value
+    if (e.key === "Backspace") {
       const newOtp = [...otp];
-      newOtp[index - 1] = "";
-      setOtp(newOtp);
+
+      if (otp[index]) {
+        // clear current
+        newOtp[index] = "";
+        setOtp(newOtp);
+      } else if (index > 0) {
+        // go back
+        const prevInput = document.getElementById(`otp-${index - 1}`);
+        prevInput?.focus();
+
+        newOtp[index - 1] = "";
+        setOtp(newOtp);
+      }
     }
   };
 
@@ -319,6 +329,14 @@ const Login = () => {
     setOtp(["", "", "", "", "", ""]);
     setError(null);
   };
+
+  useEffect(() => {
+    const isComplete = otp.every((digit) => digit !== "");
+
+    if (isComplete && !loading) {
+      handleOtpSubmit(OnOtpSubmit)(); // trigger react-hook-form submit
+    }
+  }, [otp]);
 
   return (
     <div
@@ -520,15 +538,29 @@ const Login = () => {
             className="space-y-4"
             typeof="number"
           >
-            <p
-              className={`text-center ${
-                theme === "dark" ? "text-gray-300" : "text-black"
-              } mb-4`}
-            >
-              Please enter the 6 digit otp send your
-              {userPhoneData ? userPhoneData.phoneSuffix : "email"}{" "}
-              {userPhoneData.phoneNumber && userPhoneData?.phoneNumber}
-            </p>
+            <div className="space-y-2 text-center mb-8">
+              <h2
+                className={`text-2xl font-semibold tracking-tight ${
+                  theme === "dark" ? "text-white" : "text-slate-900"
+                }`}
+              >
+                Verify your identity
+              </h2>
+
+              <p
+                className={`text-sm leading-relaxed max-w-xs mx-auto ${
+                  theme === "dark" ? "text-slate-400" : "text-slate-500"
+                }`}
+              >
+                Please enter the 6-digit OTP sent to{" "}
+                <span
+                  className={`font-medium ${theme === "dark" ? "text-blue-400" : "text-blue-600"}`}
+                >
+                  {email ||
+                    `${userPhoneData?.phoneSuffix} ${userPhoneData?.phoneNumber}`}
+                </span>
+              </p>
+            </div>
 
             <div className="flex justify-between gap-2">
               {otp.map((digit, index) => (
@@ -547,6 +579,24 @@ const Login = () => {
                   }}
                   onFocus={(e) => e.target.select()}
                   onKeyDown={(e) => handleKeyDown(index, e)}
+                  onPaste={(e) => {
+                    const pasteData = e.clipboardData
+                      .getData("text")
+                      .slice(0, 6);
+                    if (!/^\d+$/.test(pasteData)) return;
+
+                    const newOtp = pasteData.split("");
+                    while (newOtp.length < 6) newOtp.push("");
+
+                    setOtp(newOtp);
+                    setOtpValue("otp", newOtp.join(""));
+
+                    document
+                      .getElementById(
+                        `otp-${Math.min(pasteData.length - 1, 5)}`,
+                      )
+                      ?.focus();
+                  }}
                   className={`w-12 h-12 text-center text-xl font-bold border transition-all rounded-xl outline-none${theme === "dark" ? "bg-[#202c33] border-gray-700 text-white focus:ring-2 focus:ring-green-500" : "bg-white border-gray-300 text-black focus:ring-2 focus:ring-green-600 shadow-sm"} ${otpErrors.otp ? "border-red-500" : ""}`}
                 />
               ))}
@@ -580,7 +630,7 @@ const Login = () => {
                 theme === "dark"
                   ? "bg-gray-700 text-gray-300"
                   : "bg-gray-200 text-gray-700"
-              } py-2 rounded-md hover:bg-gray-300 transition flex items-center justify-center`}
+              } py-2 rounded-md hover:font-bold transition flex items-center justify-center`}
             >
               <FaArrowLeft className="mr-2" />
               Wrong Number? Go Back

@@ -1,6 +1,7 @@
 const { Server } = require("socket.io");
 const User = require("../models/user");
 const Message = require("../models/message");
+const handleVideoCallEvent = require("./videoCallService");
 
 const onlineUsers = new Map();
 const typingUsers = new Map();
@@ -23,6 +24,7 @@ function initializeSocket(server) {
     socket.on("user_connected", async (connectingUserId) => {
       try {
         userId = connectingUserId;
+        socket.userId = userId;
 
         onlineUsers.set(userId, socket.id);
         socket.join(userId);
@@ -190,8 +192,11 @@ function initializeSocket(server) {
       }
     });
 
+    //handleVideo call events
+    handleVideoCallEvent(socket, io, onlineUsers);
+
     // 🔹 DISCONNECT
-    socket.on("disconnect", async () => {
+    const handleDisconnected= async () => {
       if (!userId) return;
 
       try {
@@ -225,7 +230,7 @@ function initializeSocket(server) {
       } catch (error) {
         console.error("Error handling disconnect:", error);
       }
-    });
+    };
   });
 
   // FIXED (outside connection)
