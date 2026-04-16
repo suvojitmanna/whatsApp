@@ -538,15 +538,29 @@ const Login = () => {
             className="space-y-4"
             typeof="number"
           >
-            <p
-              className={`text-center ${
-                theme === "dark" ? "text-gray-300" : "text-black"
-              } mb-4`}
-            >
-              Please enter the 6 digit otp send your
-              {userPhoneData ? userPhoneData.phoneSuffix : "email"}{" "}
-              {userPhoneData.phoneNumber && userPhoneData?.phoneNumber}
-            </p>
+            <div className="space-y-2 text-center mb-8">
+              <h2
+                className={`text-2xl font-semibold tracking-tight ${
+                  theme === "dark" ? "text-white" : "text-slate-900"
+                }`}
+              >
+                Verify your identity
+              </h2>
+
+              <p
+                className={`text-sm leading-relaxed max-w-xs mx-auto ${
+                  theme === "dark" ? "text-slate-400" : "text-slate-500"
+                }`}
+              >
+                Please enter the 6-digit OTP sent to{" "}
+                <span
+                  className={`font-medium ${theme === "dark" ? "text-blue-400" : "text-blue-600"}`}
+                >
+                  {email ||
+                    `${userPhoneData?.phoneSuffix} ${userPhoneData?.phoneNumber}`}
+                </span>
+              </p>
+            </div>
 
             <div className="flex justify-between gap-2">
               {otp.map((digit, index) => (
