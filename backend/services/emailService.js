@@ -14,7 +14,7 @@ transport.verify((error, success) => {
   if (error) {
     console.error("❌ Gmail connection failed:", error.message);
   } else {
-    console.log("✅ Gmail configured and ready");
+    console.log(" Gmail configured and ready");
   }
 });
 
@@ -51,4 +51,4 @@ const sendOtpToEmail = async (email, otp) => {
   });
 };
 
-module.exports = sendOtpToEmail; 
+module.exports = sendOtpToEmail;

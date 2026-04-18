@@ -48,7 +48,7 @@ const status = () => {
   const userStatuses = getUserStatuses(user?._id);
   const otherStatuses = getOtherStatuses(user?._id);
   console.log(statuses);
-  
+
   useEffect(() => {
     fetchStatuses();
     initializeSocket();
@@ -96,12 +96,12 @@ const status = () => {
   };
 
   const handleViewStatus = async (contactId, statusId) => {
-  try {
-    await viewStatus(statusId);
-  } catch (error) {
-    console.log("error to status view", error);
-  }
-};
+    try {
+      await viewStatus(statusId);
+    } catch (error) {
+      console.log("error to status view", error);
+    }
+  };
 
   const handleDeleteStatus = async (statusId) => {
     try {
@@ -120,21 +120,21 @@ const status = () => {
       handlePreviewClose();
     }
   };
-  
+
   const handlePreviewPrev = () => {
     setCurrentStatusIndex((prev) => Math.max(prev - 1, 0));
   };
 
   const handleStatusPreview = (contact, statusIndex = 0) => {
-  setPreviewContact(contact);
-  setCurrentStatusIndex(statusIndex);
+    setPreviewContact(contact);
+    setCurrentStatusIndex(statusIndex);
 
-  const status = contact.statuses[statusIndex];
+    const status = contact.statuses[statusIndex];
 
-  if (status) {
-    handleViewStatus(contact.id, status.id);
-  }
-};
+    if (status) {
+      handleViewStatus(contact.id, status.id);
+    }
+  };
 
   const handlePreviewClose = () => {
     setPreviewContact(null);
@@ -331,7 +331,7 @@ const status = () => {
 
           {/* Others' Updates Section */}
           <div className="mt-12">
-            {/* 🔥 Section Header */}
+            {/*  Section Header */}
             <div className="flex items-center justify-between px-2 mb-4">
               <h3
                 className={`text-[11px] font-black uppercase tracking-[0.25em] ${

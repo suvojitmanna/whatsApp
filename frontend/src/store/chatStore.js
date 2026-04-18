@@ -29,18 +29,16 @@ export const useChatStore = create((set, get) => ({
 
     // Listen for incoming messages
     socket.on("receive_message", (message) => {
-  get().receiveMessage(message); // 🔥 FIX
-});
+      get().receiveMessage(message); //  FIX
+    });
 
     socket.on("message_status_update_bulk", ({ messageIds, messageStatus }) => {
-  set((state) => ({
-    messages: state.messages.map((msg) =>
-      messageIds.includes(msg._id)
-        ? { ...msg, messageStatus }
-        : msg
-    ),
-  }));
-});
+      set((state) => ({
+        messages: state.messages.map((msg) =>
+          messageIds.includes(msg._id) ? { ...msg, messageStatus } : msg,
+        ),
+      }));
+    });
 
     // confirm message sent successfully
     socket.on("message_send", (message) => {
@@ -323,7 +321,8 @@ export const useChatStore = create((set, get) => ({
     try {
       await axiosInstance.put("/chat/messages/read", {
         messageIds: unreadIds,
-      });console.log("📩 marking as read:", unreadIds);
+      });
+      console.log("📩 marking as read:", unreadIds);
 
       set((state) => ({
         messages: state.messages.map((msg) =>
@@ -373,7 +372,7 @@ export const useChatStore = create((set, get) => ({
     console.log("🟢 STEP 3 socket after init:", socket?.id);
 
     if (socket && currentUser) {
-      console.log("🔥 STEP 4 EMIT DATA:", {
+      console.log(" STEP 4 EMIT DATA:", {
         messageId,
         emoji,
         reactionUserId: currentUser._id,

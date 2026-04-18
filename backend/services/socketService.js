@@ -67,7 +67,7 @@ function initializeSocket(server) {
 
     // 🔹 READ RECEIPT
     socket.on("message_read", async ({ messageIds }) => {
-      console.log("🔥 READ EVENT RECEIVED:", messageIds, messageStatus);
+      console.log(" READ EVENT RECEIVED:", messageIds, messageStatus);
       try {
         const messages = await Message.find({ _id: { $in: messageIds } });
 
@@ -212,7 +212,7 @@ function initializeSocket(server) {
         io.emit("user_status", {
           userId,
           isOnline: false,
-          lastSeen, // ✅ correct
+          lastSeen, //  correct
         });
 
         socket.leave(userId);
