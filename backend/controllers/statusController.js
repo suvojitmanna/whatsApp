@@ -6,7 +6,8 @@ const Status = require("../models/status.js");
 exports.createStatus = async (req, res) => {
   try {
     const { content, contentType, expireAt: inputExpireAt } = req.body;
-
+    console.log("BODY:", req.body);
+    console.log("FILE:", req.file);
     const file = req.file;
     const userId = req.user.userId;
 
@@ -73,7 +74,6 @@ exports.getStatuses = async (req, res) => {
 
     const statuses = await Status.find({
       expireAt: { $gt: new Date() },
-      user: { $ne: userId },
     })
       .populate("user", "username profilePicture")
       .populate("viewers.user", "username profilePicture")

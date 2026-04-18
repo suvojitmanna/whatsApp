@@ -30,6 +30,8 @@ const MessageBuble = ({
   const emojiPickerRef = useRef(null);
   const reactionsMenuRef = useRef(null);
   const optionRef = useRef(null);
+  const pressTimer = useRef(null);
+  const isLongPress = useRef(false);
 
   const isUserMessage = message.sender?._id === currentUser?._id;
 
@@ -46,6 +48,25 @@ const MessageBuble = ({
       }`;
 
   const quickReactions = ["👍", "❤️", "😂", "😮", "😢", "🙏"];
+
+  const handleTouchStart = () => {
+    isLongPress.current = false;
+
+    pressTimer.current = setTimeout(() => {
+      isLongPress.current = true;
+      setShowReactions(true);
+    }, 400);
+  };
+
+  const handleTouchEnd = () => {
+    clearTimeout(pressTimer.current);
+  };
+
+  const handleClick = () => {
+    if (!isLongPress.current) {
+      setShowReactions((prev) => !prev);
+    }
+  };
 
   const handleReact = (emoji) => {
     onReact(message._id, emoji);
@@ -70,34 +91,46 @@ const MessageBuble = ({
   return (
     <div className={`chat ${bubbleClass}`}>
       <div className={`${bubbleContentClass} relative group`} ref={messageRef}>
-        {/* MESSAGE */}
-        <div className="flex flex-col gap-1">
-          {message.contentType === "text" && (
-            <p className="break-all whitespace-pre-wrap">{message.content}</p>
-          )}
+        <div
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          onMouseDown={handleTouchStart} // desktop hold (optional)
+          onMouseUp={handleTouchEnd}
+          onClick={() => setShowReactions((prev) => !prev)} // normal click
+          className="relative"
+        >
+          {/* MESSAGE */}
+          <div className="flex flex-col gap-1">
+            {message.contentType === "text" && (
+              <p className="break-all whitespace-pre-wrap">{message.content}</p>
+            )}
 
-          {message.contentType === "image" && (
-            <div>
-              <img
-                src={message.imageOrVideoUrl}
-                alt="img"
-                className="rounded-lg max-w-xs"
-              />
-              <p className="mt-1">{message.content}</p>
-            </div>
-          )}
+            {message.contentType === "image" && (
+              <div className="max-w-full">
+                <img
+                  src={message.imageOrVideoUrl}
+                  alt="img"
+                  className="rounded-xl w-full max-w-[280px] sm:max-w-xs md:max-w-sm object-cover"
+                />
+                {message.content && (
+                  <p className="mt-1 break-words">{message.content}</p>
+                )}
+              </div>
+            )}
 
-          {message.contentType === "video" && (
-            <div>
-              <video
-                src={message.imageOrVideoUrl}
-                alt="video"
-                controls
-                className="rounded-lg max-w-xs"
-              />
-              <p className="mt-1">{message.content}</p>
-            </div>
-          )}
+            {message.contentType === "video" && (
+              <div className="max-w-full">
+                <video
+                  src={message.imageOrVideoUrl}
+                  controls
+                  className="rounded-xl w-full max-w-[280px] sm:max-w-xs md:max-w-sm"
+                />
+                {message.content && (
+                  <p className="mt-1 break-words">{message.content}</p>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* TIME */}
@@ -118,7 +151,7 @@ const MessageBuble = ({
         </div>
 
         {/* 3 DOT */}
-        <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition z-20">
+        <div className="absolute top-1 right-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition z-20">
           <button
             onClick={() => setShowOptions((prev) => !prev)}
             className={`p-1 rounded-full cursor-pointer ${
