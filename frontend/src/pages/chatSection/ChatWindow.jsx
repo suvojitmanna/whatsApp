@@ -237,6 +237,15 @@ const ChatWindow = ({ selectedContact, setSelectedContact }) => {
     }
   };
 
+  // Close on outside click
+  useOutsideClick(emojiPickerRef, () => {
+    if (showEmojiPicker) setShowEmojiPicker(false);
+  });
+
+  useOutsideClick(fileMenuRef, () => {
+    if (showFileMenu) setShowFileMenu(false);
+  });
+
   if (!selectedContact) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center mx-auto h-screen text-center">
@@ -262,15 +271,6 @@ const ChatWindow = ({ selectedContact, setSelectedContact }) => {
       </div>
     );
   }
-
-  // Close on outside click
-  useOutsideClick(emojiPickerRef, () => {
-    if (showEmojiPicker) setShowEmojiPicker(false);
-  });
-
-  useOutsideClick(fileMenuRef, () => {
-    if (showFileMenu) setShowFileMenu(false);
-  });
   return (
     <>
       <div
@@ -291,7 +291,7 @@ const ChatWindow = ({ selectedContact, setSelectedContact }) => {
           <img
             src={selectedContact?.profilePicture}
             alt={selectedContact?.username}
-            className="ml-4 w-10 h-10 rounded-full"
+            className="ml-4 w-10 h-10 rounded-full "
           />
 
           <div className="ml-3 flex-grow">
@@ -307,10 +307,10 @@ const ChatWindow = ({ selectedContact, setSelectedContact }) => {
                   theme === "dark" ? "text-gray-400" : "text-gray-500"
                 }`}
               >
-                {selectedContact?.isOnline
+                {online
                   ? "Online"
-                  : selectedContact?.lastSeen
-                    ? `Last seen ${formatTimestamp(selectedContact.lastSeen)}`
+                  : lastSeen
+                    ? `Last seen ${formatTimestamp(lastSeen)}`
                     : "Offline"}
               </p>
             )}
@@ -372,19 +372,13 @@ const ChatWindow = ({ selectedContact, setSelectedContact }) => {
               return (
                 <React.Fragment key={date}>
                   {/* Enhanced Separator */}
-                  <div className="sticky top-2 z-10 flex justify-center my-4">
+                  <div className="flex justify-center my-4">
                     <span
-                      className={`px-4 py-1.5 rounded-full text-xs font-medium shadow-sm backdrop-blur-md ${
-                        theme === "dark"
-                          ? "bg-[#182229]/80 text-gray-400 border border-white/5"
-                          : "bg-white/80 text-gray-600 border border-black/5"
+                      className={`px-4 py-1.5 text-xs font-medium ${
+                        theme === "dark" ? "text-gray-400" : "text-gray-600"
                       }`}
                     >
-                      {new Date(date).toLocaleDateString(undefined, {
-                        weekday: "long",
-                        month: "short",
-                        day: "numeric",
-                      })}
+                      {renderDateSeparator(new Date(date))}
                     </span>
                   </div>
 

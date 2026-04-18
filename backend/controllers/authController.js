@@ -262,7 +262,7 @@ const getAllUsers = async (req, res) => {
 
     console.log(usersWithConversations);
 
-    console.log("✅ FINAL USERS:", usersWithConversations.length);
+    console.log(" FINAL USERS:", usersWithConversations.length);
     console.log("==== END ====");
 
     // SIMPLE RESPONSE (BEST)

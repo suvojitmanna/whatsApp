@@ -75,6 +75,7 @@ const Layout = ({
               />
             </motion.div>
           )}
+          {isStatusPreviewOpen && statusPreviewContent}
         </AnimatePresence>
       </div>
 

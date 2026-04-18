@@ -1,9 +1,28 @@
 export default function formatTimestamp(timestamp) {
-  const now = Date.now();
-  const messageTime = new Date(timestamp).getTime();
-  const diff = now - messageTime;
-  if (diff < 60000) return "Just now";
-  if (diff < 3600000) return `${Math.floor(diff / 60000)} minutes ago`;
-  if (diff < 86400000) return `${Math.floor(diff / 3600000)} hours ago`;
-  return `${Math.floor(diff / 86400000)} days ago`;
+  if (!timestamp) return "";
+
+  const date = new Date(timestamp);
+  const now = new Date();
+
+  const isToday = date.toDateString() === now.toDateString();
+
+  const yesterday = new Date();
+  yesterday.setDate(now.getDate() - 1);
+
+  const isYesterday = date.toDateString() === yesterday.toDateString();
+
+  const time = date.toLocaleTimeString("en-IN", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  if (isToday) return `today at ${time}`;
+  if (isYesterday) return `yesterday at ${time}`;
+
+  return (
+    date.toLocaleDateString("en-IN", {
+      day: "numeric",
+      month: "short",
+    }) + ` at ${time}`
+  );
 }

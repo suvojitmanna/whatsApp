@@ -67,7 +67,7 @@ function initializeSocket(server) {
 
     // 🔹 READ RECEIPT
     socket.on("message_read", async ({ messageIds }) => {
-      console.log("🔥 READ EVENT RECEIVED:", messageIds, messageStatus);
+      console.log(" READ EVENT RECEIVED:", messageIds, messageStatus);
       try {
         const messages = await Message.find({ _id: { $in: messageIds } });
 
@@ -196,33 +196,23 @@ function initializeSocket(server) {
     handleVideoCallEvent(socket, io, onlineUsers);
 
     // 🔹 DISCONNECT
-    const handleDisconnected= async () => {
+    const handleDisconnected = async () => {
       if (!userId) return;
 
       try {
         onlineUsers.delete(userId);
 
-        if (typingUsers.has(userId)) {
-          const userTyping = typingUsers.get(userId);
-
-          Object.keys(userTyping).forEach((key) => {
-            if (key.endsWith("_timeout")) {
-              clearTimeout(userTyping[key]);
-            }
-          });
-
-          typingUsers.delete(userId);
-        }
+        const lastSeen = new Date().toISOString();
 
         await User.findByIdAndUpdate(userId, {
           isOnline: false,
-          lastSeen: new Date(),
+          lastSeen,
         });
 
         io.emit("user_status", {
           userId,
           isOnline: false,
-          lastSeen: new Date(),
+          lastSeen, //  correct
         });
 
         socket.leave(userId);
@@ -231,6 +221,8 @@ function initializeSocket(server) {
         console.error("Error handling disconnect:", error);
       }
     };
+
+    socket.on("disconnect", handleDisconnected);
   });
 
   // FIXED (outside connection)
