@@ -7,7 +7,6 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-// FIXED
 export const sendOtp = (phoneNumber, phoneSuffix, email) => {
   return axiosInstance.post("/auth/send-otp", {
     phoneNumber,
@@ -16,7 +15,6 @@ export const sendOtp = (phoneNumber, phoneSuffix, email) => {
   });
 };
 
-// FIXED
 export const verifyOtp = (phoneNumber, phoneSuffix, otp, email) => {
   return axiosInstance.post("/auth/verify-otp", {
     phoneNumber,

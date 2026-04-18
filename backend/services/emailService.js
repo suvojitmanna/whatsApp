@@ -20,26 +20,33 @@ transport.verify((error, success) => {
 
 const sendOtpToEmail = async (email, otp) => {
   const html = `
-    <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
-      <h2 style="color: #075e54;">🔐 WhatsApp Web Verification</h2>
+    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; border: 1px solid #eee; padding: 20px; border-radius: 10px;">
+      <h2 style="color: #075e54; border-bottom: 2px solid #25d366; padding-bottom: 10px;">🔐 WhatsApp Web Verification</h2>
       
       <p>Hi there,</p>
       
       <p>Your one-time password (OTP) to verify your WhatsApp Web account is:</p>
       
-      <h1 style="background: #e0f7fa; color: #000; padding: 10px 20px; display: inline-block; border-radius: 5px; letter-spacing: 2px;">
-        ${otp}
-      </h1>
+      <div style="text-align: center; margin: 30px 0;">
+        <span style="background: #e0f7fa; color: #004d40; padding: 15px 30px; font-size: 24px; font-weight: bold; border-radius: 8px; letter-spacing: 5px; border: 1px dashed #00bcd4;">
+          ${otp}
+        </span>
+      </div>
 
-      <p><strong>This OTP is valid for the next 5 minutes.</strong> Please do not share this code with anyone.</p>
+      <p><strong>This OTP is valid for the next 5 minutes.</strong> For your security, please do not share this code with anyone.</p>
 
-      <p>If you didn’t request this OTP, please ignore this email.</p>
+      <p style="background: #fff3e0; padding: 10px; border-left: 4px solid #ff9800; font-size: 0.9em;">
+        If you didn’t request this OTP, someone may be trying to access your account. Please ignore this email or update your security settings.
+      </p>
 
-      <p style="margin-top: 20px;">Thanks & Regards,<br/>WhatsApp Web Security Team</p>
+      <p style="margin-top: 30px;">Thanks & Regards,<br/><strong>WhatsApp Web Security Team</strong></p>
 
-      <hr style="margin: 30px 0;" />
+      <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;" />
 
-      <small style="color: #777;">This is an automated message. Please do not reply.</small>
+      <p style="font-size: 12px; color: #999; text-align: center;">
+        This is an automated message. Please do not reply to this email.<br/>
+        &copy; ${new Date().getFullYear()} WhatsApp LLC
+      </p>
     </div>
   `;
 

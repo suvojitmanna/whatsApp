@@ -18,8 +18,7 @@ const statusSchema = new mongoose.Schema(
       enum: ["text", "image", "video"],
       default: "text",
     },
-
-    // ✅ FIXED HERE
+    
     viewers: [
       {
         user: {
