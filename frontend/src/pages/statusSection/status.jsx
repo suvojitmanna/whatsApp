@@ -48,6 +48,7 @@ const status = () => {
   const userStatuses = getUserStatuses(user?._id);
   const otherStatuses = getOtherStatuses(user?._id);
   console.log(statuses);
+  
   useEffect(() => {
     fetchStatuses();
     initializeSocket();
@@ -94,13 +95,13 @@ const status = () => {
     }
   };
 
-  const handleViewStatus = async (statusId) => {
-    try {
-      await viewStatus(statusId);
-    } catch (error) {
-      console.log("error to status view", error);
-    }
-  };
+  const handleViewStatus = async (contactId, statusId) => {
+  try {
+    await viewStatus(statusId);
+  } catch (error) {
+    console.log("error to status view", error);
+  }
+};
 
   const handleDeleteStatus = async (statusId) => {
     try {
@@ -119,18 +120,21 @@ const status = () => {
       handlePreviewClose();
     }
   };
+  
   const handlePreviewPrev = () => {
     setCurrentStatusIndex((prev) => Math.max(prev - 1, 0));
   };
 
   const handleStatusPreview = (contact, statusIndex = 0) => {
-    setPreviewContact(contact);
-    setCurrentStatusIndex(statusIndex);
+  setPreviewContact(contact);
+  setCurrentStatusIndex(statusIndex);
 
-    if (contact.statuses[statusIndex]) {
-      handleViewStatus(contact.statuses[statusIndex].id);
-    }
-  };
+  const status = contact.statuses[statusIndex];
+
+  if (status) {
+    handleViewStatus(contact.id, status.id);
+  }
+};
 
   const handlePreviewClose = () => {
     setPreviewContact(null);

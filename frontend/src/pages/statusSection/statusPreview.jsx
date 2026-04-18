@@ -101,60 +101,55 @@ const StatusPreview = ({
                 </div>
               ))}
             </div>
-            <div className="absolute top-8 left-0 right-0 px-4 z-10 flex items-center gap-3">
-              {/* Profile Picture */}
-              <div className="flex-shrink-0">
-                <img
-                  src={contact?.avatar}
-                  alt={contact?.name}
-                  className="w-10 h-10 rounded-full object-cover border border-white/20"
-                />
-              </div>
 
-              {/* Name and Timestamp Container */}
-              <div className="flex flex-col justify-center">
-                <p className="text-white font-medium leading-tight">
-                  {contact?.name}
-                </p>
-                <p className="text-gray-300 text-xs mt-0.5">
-                  {formatTimestamp(currentStatus.timeStamp)}
-                </p>
-              </div>
-            </div>
-
-            <div className="absolute top-8 left-0 right-0 px-4 z-20 flex items-center justify-between">
+            <div className="absolute top-8 left-0 right-0 px-6 z-20 flex items-center justify-between">
               {/* Left Side: Profile & Info */}
               <div className="flex items-center gap-3">
                 <img
                   src={contact?.avatar}
                   alt={contact?.name}
-                  className="w-10 h-10 rounded-full object-cover border border-white/20"
+                  className="w-10 h-10 rounded-full object-cover border border-white/20 shadow-md"
                 />
                 <div className="flex flex-col">
-                  <p className="text-white font-medium leading-tight">
+                  <p className="text-white font-medium leading-tight drop-shadow-md">
                     {contact?.name}
                   </p>
-                  <p className="text-gray-300 text-xs mt-0.5">
+                  <p className="text-white/70 text-xs mt-0.5">
                     {formatTimestamp(currentStatus.timeStamp)}
                   </p>
                 </div>
               </div>
 
-              {/* Right Side: Actions */}
-              {isOwner && (
-                <div className="flex items-center">
+              {/* Right Side: Action Group */}
+              <div className="flex items-center gap-3">
+                {isOwner && (
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       handleDeleteStatus();
                     }}
-                    className="p-2 text-white bg-white/10 hover:bg-red-500/80 rounded-full transition-colors group"
+                    className="group p-2.5 flex items-center justify-center
+                   bg-white/10 backdrop-blur-md border border-white/10
+                   text-white/80 rounded-full transition-all duration-300
+                   hover:bg-red-500/20 hover:border-red-500/40 hover:text-red-500
+                   active:scale-90 cursor-pointer"
                     title="Delete Status"
                   >
-                    <FaTrash className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                    <FaTrash className="h-4 w-4 transition-transform group-hover:rotate-12" />
                   </button>
-                </div>
-              )}
+                )}
+
+                <button
+                  onClick={onClose}
+                  className="p-2.5 flex items-center justify-center
+                 text-white/90 bg-white/10 backdrop-blur-md border border-white/20 
+                 rounded-full shadow-lg transition-all duration-300
+                 hover:bg-white/20 hover:text-white hover:scale-110 active:scale-95 cursor-pointer"
+                  aria-label="Close Preview"
+                >
+                  <FaTimes className="h-5 w-5" />
+                </button>
+              </div>
             </div>
 
             <div className="w-full h-full flex items-center justify-center">
@@ -178,12 +173,6 @@ const StatusPreview = ({
                 />
               ) : null}
             </div>
-            <button
-              onClick={onClose}
-              className="absolute top-4 right-4 text-white bg-black bg-opacity-50 rounded-full hover:bg-opacity-70 transition-all z-10"
-            >
-              <FaTimes className="h-5 w-5" />
-            </button>
 
             {currentIndex > 0 && (
               <button
