@@ -14,7 +14,7 @@ transport.verify((error, success) => {
   if (error) {
     console.error("❌ Gmail connection failed:", error.message);
   } else {
-    console.log(" Gmail configured and ready");
+    console.log("✅ Gmail configured and ready");
   }
 });
 
