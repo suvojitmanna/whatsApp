@@ -32,7 +32,6 @@ const ChatList = ({ contacts }) => {
 
       return timeB - timeA;
     });
-  console.log(contacts);
 
   return (
     <div
