@@ -6,7 +6,7 @@ const socketMiddleware = (socket, next) => {
       socket.handshake.auth?.token ||
       socket.handshake.headers?.authorization?.split(" ")[1];
 
-    // 🔥 ADD COOKIE SUPPORT (THIS WAS MISSING)
+    // ADD COOKIE SUPPORT (THIS WAS MISSING)
     if (!token && socket.handshake.headers?.cookie) {
       const cookies = Object.fromEntries(
         socket.handshake.headers.cookie.split("; ").map((c) => c.split("=")),
