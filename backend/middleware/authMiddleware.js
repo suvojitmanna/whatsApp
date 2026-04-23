@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const response = require("../utils/responseHandeler");
 
 const authMiddleware = (req, res, next) => {
-  // 🔥 get token from BOTH cookie + header
+  // get token from BOTH cookie + header
   const token =
     req.cookies?.auth_token ||
     (req.headers.authorization && req.headers.authorization.split(" ")[1]);
