@@ -6,7 +6,6 @@ import { isToday, isYesterday, format } from "date-fns";
 import whatsappImage from "../../assets/whatsapp_image.png";
 import {
   FaArrowLeft,
-  FaEllipsisH,
   FaEllipsisV,
   FaFile,
   FaImage,
@@ -27,6 +26,8 @@ import formatTimestamp from "../../utils/formatTime";
 import VideoCallManager from "../videoCall/videoCallManager";
 import { getSocket } from "../../services/chatService";
 import useVideoCallStore from "../../store/videoCallStore";
+import useLayoutStore from "../../store/layoutStore";
+import { HiDotsVertical } from "react-icons/hi";
 
 const isValidate = (date) => {
   return date instanceof Date && !isNaN(date);
@@ -69,6 +70,11 @@ const ChatWindow = ({ selectedContact, setSelectedContact }) => {
   const online = isUserOnline(selectedContact?._id);
   const lastSeen = getUserLastSeen(selectedContact?._id);
   const isTyping = isUserTyping(selectedContact?._id);
+
+  const showContactInfo = useLayoutStore((state) => state.showContactInfo);
+  const setShowContactInfo = useLayoutStore(
+    (state) => state.setShowContactInfo,
+  );
 
   useEffect(() => {
     if (selectedContact?._id && conversations?.data?.length > 0) {
@@ -288,13 +294,31 @@ const ChatWindow = ({ selectedContact, setSelectedContact }) => {
             <FaArrowLeft className="mr-2 focus:outline-none cursor-pointer h-full w-full " />
           </button>
 
-          <img
-            src={selectedContact?.profilePicture}
-            alt={selectedContact?.username}
-            className="ml-4 w-10 h-10 rounded-full "
-          />
+          <div className="relative ml-4">
+  {/* Profile Picture */}
+  <img
+    src={selectedContact?.profilePicture || "/default-avatar.png"}
+    alt={selectedContact?.username}
+    onClick={() => setShowContactInfo(true)}
+    className="w-10 h-10 rounded-full cursor-pointer object-cover hover:opacity-80 transition-opacity border border-white/10"
+  />
 
-          <div className="ml-3 flex-grow">
+  {/* Real-life WhatsApp Online Dot */}
+  {online && (
+    <span 
+      className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 
+      /* The "Cutout" effect: matches your header/sidebar background */
+      ${theme === "dark" ? "border-[#111b21]" : "border-white"} 
+      bg-emerald-500 shadow-sm`}
+      title="Online"
+    ></span>
+  )}
+</div>
+
+          <div
+            className="ml-3 flex-grow cursor-pointer"
+            onClick={() => setShowContactInfo(true)}
+          >
             <h2 className="font-semibold text-start">
               {selectedContact?.username}
             </h2>
@@ -337,7 +361,7 @@ const ChatWindow = ({ selectedContact, setSelectedContact }) => {
             </button>
 
             <button className="focus:outline-none cursor-pointer">
-              <FaEllipsisH className="h-5 w-5" />
+              <HiDotsVertical className="h-5 w-5" />
             </button>
           </div>
         </div>

@@ -4,6 +4,7 @@ import useThemeStore from "../store/themeStore";
 import SideBar from "../components/sideBar";
 import { motion, AnimatePresence } from "framer-motion";
 import ChatWindow from "../pages/chatSection/ChatWindow";
+import ContactInfo from "../components/ContactInfo"
 
 const Layout = ({
   children,
@@ -19,6 +20,7 @@ const Layout = ({
 
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const { theme, setTheme } = useThemeStore();
+  const showContactInfo = useLayoutStore((state) => state.showContactInfo);
 
   useEffect(() => {
     const handleResize = () => {
@@ -77,6 +79,7 @@ const Layout = ({
           )}
           {isStatusPreviewOpen && statusPreviewContent}
         </AnimatePresence>
+        {showContactInfo && <ContactInfo />}
       </div>
 
       {/* Mobile Sidebar */}
