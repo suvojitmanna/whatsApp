@@ -1,6 +1,23 @@
 # 💬 WhatsApp Clone — Real-Time Messaging Platform
 
 <p align="center">
+  <a href="https://whats-app-one-sigma.vercel.app/">
+    <img src="https://img.shields.io/badge/🚀 Live%20Preview-Open%20App-25D366?style=for-the-badge" />
+  </a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white" />
+  <img src="https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white" />
+  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" />
+  <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" />
+</p>
+
+<p align="center">
+  <b>MERN Stack Application (MongoDB • Express • React • Node.js)</b>
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white" />
   <img src="https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white" />
   <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" />
@@ -140,9 +157,17 @@ VITE_API_URL=your_backend_url
 
 ---
 
-## 📸 Preview
+## 📸 Live Preview
 
-> Add screenshots here for a premium showcase
+<p align="center">
+  <a href="https://whats-app-one-sigma.vercel.app/">
+    <img src="https://img.shields.io/badge/🌐 Click%20to%20View%20Live%20App-WhatsApp%20Clone-0a66c2?style=for-the-badge" />
+  </a>
+</p>
+
+<p align="center">
+  Experience the app live: https://whats-app-one-sigma.vercel.app/
+</p>
 
 ---
 
