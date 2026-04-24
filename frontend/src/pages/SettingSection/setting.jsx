@@ -110,7 +110,7 @@ const Settings = () => {
                   placeholder="Search settings"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className={`w-full py-2.5 pl-12 pr-4 outline-none transition-all rounded-full ${
+                  className={`w-full py-2.5 pl-12 pr-4 outline-none transition-all rounded-full focus:ring-2 focus:ring-green-500 focus:outline-none ${
                     theme === "dark"
                       ? "bg-[#202c33] focus:bg-[#2a3942] text-white"
                       : "bg-gray-100 focus:bg-gray-200 text-gray-900"
