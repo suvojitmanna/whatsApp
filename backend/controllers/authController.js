@@ -219,7 +219,7 @@ const getAllUsers = async (req, res) => {
       _id: { $ne: loggedInUserId },
     })
       .select(
-        "username profilePicture lastSeen isOnline phoneNumber phoneSuffix about",
+        "username profilePicture lastSeen isOnline phoneSuffix phoneNumber phoneSuffix about email",
       )
       .lean();
 

@@ -6,6 +6,7 @@ const useLayoutStore = create(
     (set) => ({
       activeTab: "chats",
       selectedContact: null,
+      showContactInfo: false,
 
       setSelectedContact: (contact) => {
         set({ selectedContact: contact });
@@ -14,6 +15,8 @@ const useLayoutStore = create(
       setActiveTab: (tab) => {
         set({ activeTab: tab });
       },
+
+      setShowContactInfo: (value) => set({ showContactInfo: value }),
     }),
     {
       name: "layout-storage",
