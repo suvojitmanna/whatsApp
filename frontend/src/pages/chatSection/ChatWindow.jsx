@@ -39,7 +39,6 @@ const ChatWindow = ({ selectedContact, setSelectedContact }) => {
   const [message, setMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showFileMenu, setShowFileMenu] = useState(false);
-  const [searchIcon, setSearchIcon] = useState(false);
   const [filePreview, setFilePreview] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -422,11 +421,15 @@ const ChatWindow = ({ selectedContact, setSelectedContact }) => {
 
           <div className="relative ml-4">
             {/* Profile Picture */}
-            <img
+            <motion.img
+              layoutId="profile-image"
               src={selectedContact?.profilePicture || "/default-avatar.png"}
               alt={selectedContact?.username}
-              onClick={() => setShowContactInfo(true)}
-              className="w-10 h-10 rounded-full cursor-pointer object-cover hover:opacity-80 transition-opacity border border-white/10"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowContactInfo(true);
+              }}
+              className="w-10 h-10 rounded-full cursor-pointer object-cover "
             />
 
             {/* Real-life WhatsApp Online Dot */}
@@ -467,7 +470,6 @@ const ChatWindow = ({ selectedContact, setSelectedContact }) => {
           {/* search icon */}
           <div className="px-4 py-2" ref={searchIconRef}>
             <div className="relative flex items-center justify-end">
-
               {/* Search Icon Trigger */}
               <button
                 onClick={() => setIsSearchOpen(true)}
@@ -651,9 +653,7 @@ const ChatWindow = ({ selectedContact, setSelectedContact }) => {
         {/* message part seen */}
         <div
           className={`flex-1 p-4 overflow-y-auto scroll-smooth custom-scrollbar relative transition-colors duration-500 ${
-            theme === "dark"
-              ? "bg-[#0b141a] bg-opacity-95"
-              : "bg-[#efe7de]"
+            theme === "dark" ? "bg-[#0b141a] bg-opacity-95" : "bg-[#efe7de]"
           }`}
           style={{
             backgroundImage:

@@ -22,6 +22,11 @@ const ContactInfo = () => {
     setShowContactInfo(false);
   });
 
+    const setShowProfilePicture = useLayoutStore(
+    (state) => state.setShowProfilePicture,
+  );
+
+
   const handleVideoCall = () => {
     if (selectedContact && online) {
       const { initiateCall } = useVideoCallStore.getState();
@@ -159,7 +164,8 @@ const ContactInfo = () => {
               <img
                 src={selectedContact?.profilePicture || "/default-avatar.png"}
                 alt={selectedContact?.username}
-                className="w-40 h-40 rounded-full object-cover border-4 border-white/10 shadow-[0_20px_50px_rgba(16,185,129,0.3)]"
+                onClick={() => setShowProfilePicture(true)}
+                className="w-40 h-40 rounded-full object-cover border-4 border-white/10 shadow-[0_20px_50px_rgba(16,185,129,0.3)] cursor-pointer"
               />
               {/* Online Status Indicator Dot */}
               {online && (

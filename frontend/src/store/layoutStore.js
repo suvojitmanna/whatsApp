@@ -17,7 +17,9 @@ const useLayoutStore = create(
       },
 
       setShowContactInfo: (value) => set({ showContactInfo: value }),
-    }),
+      setShowProfilePicture: (value) => set({ showProfilePicture: value }),
+    }
+    ),
     {
       name: "layout-storage",
       storage: createJSONStorage(() => localStorage),
