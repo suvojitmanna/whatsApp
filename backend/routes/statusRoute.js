@@ -5,15 +5,11 @@ const multer = require("multer");
 
 const router = express.Router();
 
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
+const upload = multer({
+  dest: "uploads/",
+});
 
-router.post(
-  "/",
-  authMiddleware,
-  upload.single("file"),
-  statusController.createStatus,
-);
+router.post("/", authMiddleware, upload.single("media"), statusController.createStatus,);
 
 router.get("/", authMiddleware, statusController.getStatuses);
 router.put("/:statusId/view", authMiddleware, statusController.viewStatus);

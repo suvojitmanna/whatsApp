@@ -149,33 +149,38 @@ exports.getMessages = async (req, res) => {
 
 exports.markAsRead = async (req, res) => {
   const userId = req.user.userId;
-  const { messageId } = req.body;
+  const { messageIds } = req.body;
 
   try {
     let messages = await Message.find({
-      _id: messageId,
+      _id: { $in: messageIds },
       receiver: userId,
     });
 
     if (!messages.length) {
-      return response(res, 404, "Message not found");
+      return response(res, 404, "Messages not found");
     }
 
     await Message.updateMany(
-      { _id: messageId, receiver: userId },
-      { $set: { messageStatus: "read" } },
+      {
+        _id: { $in: messageIds },
+        receiver: userId,
+      },
+      {
+        $set: { messageStatus: "read" },
+      }
     );
 
-    // Update local response
     messages = messages.map((msg) => ({
       ...msg._doc,
       messageStatus: "read",
     }));
 
-    // Socket emit
     if (req.io && req.socketUserMap instanceof Map) {
       for (const message of messages) {
-        const senderSocketId = req.socketUserMap.get(message.sender.toString());
+        const senderSocketId = req.socketUserMap.get(
+          message.sender.toString()
+        );
 
         if (senderSocketId) {
           req.io.to(senderSocketId).emit("message_read", {
@@ -186,7 +191,8 @@ exports.markAsRead = async (req, res) => {
       }
     }
 
-    return response(res, 200, "Message marked as read", messages);
+    return response(res, 200, "Messages marked as read", messages);
+
   } catch (error) {
     console.error(error);
     return response(res, 500, "Internal server error");

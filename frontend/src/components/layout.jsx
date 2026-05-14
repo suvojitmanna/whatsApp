@@ -4,7 +4,8 @@ import useThemeStore from "../store/themeStore";
 import SideBar from "../components/sideBar";
 import { motion, AnimatePresence } from "framer-motion";
 import ChatWindow from "../pages/chatSection/ChatWindow";
-import ContactInfo from "../components/ContactInfo"
+import ContactInfo from "../components/ContactInfo";
+import ProfilePicture from "../components/profilePicture";
 
 const Layout = ({
   children,
@@ -21,6 +22,13 @@ const Layout = ({
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const { theme, setTheme } = useThemeStore();
   const showContactInfo = useLayoutStore((state) => state.showContactInfo);
+  const showProfilePicture = useLayoutStore(
+  (state) => state.showProfilePicture
+);
+
+const setShowProfilePicture = useLayoutStore(
+  (state) => state.setShowProfilePicture
+);
 
   useEffect(() => {
     const handleResize = () => {
@@ -80,6 +88,14 @@ const Layout = ({
           {isStatusPreviewOpen && statusPreviewContent}
         </AnimatePresence>
         {showContactInfo && <ContactInfo />}
+        {showProfilePicture && (
+  <ProfilePicture
+    isOpen={showProfilePicture}
+    onClose={() => setShowProfilePicture(false)}
+    image={selectedContact?.profilePicture}
+    username={selectedContact?.username}
+  />
+)}
       </div>
 
       {/* Mobile Sidebar */}

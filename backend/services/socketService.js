@@ -21,7 +21,6 @@ function initializeSocket(server) {
   io.use(socketMiddleware);
 
   io.on("connection", (socket) => {
-    console.log("A user connected:", socket.id);
     let userId;
 
     // 🔹 USER CONNECT
@@ -71,7 +70,7 @@ function initializeSocket(server) {
 
     // 🔹 READ RECEIPT
     socket.on("message_read", async ({ messageIds }) => {
-      console.log(" READ EVENT RECEIVED:", messageIds, messageStatus);
+      console.log(" READ EVENT RECEIVED:", {messageIds,messageStatus: "read",});
       try {
         const messages = await Message.find({ _id: { $in: messageIds } });
 
@@ -149,7 +148,6 @@ function initializeSocket(server) {
       });
     });
 
-    // 🔹 ADD REACTION
     const mongoose = require("mongoose");
 
     socket.on("add_reaction", async ({ messageId, emoji, reactionUserId }) => {
