@@ -61,7 +61,6 @@ const StatusPreview = ({
   };
 
   if (!currentStatus) return null;
-
   return (
     <div>
       <motion.div

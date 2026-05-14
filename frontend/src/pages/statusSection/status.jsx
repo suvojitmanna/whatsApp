@@ -47,7 +47,6 @@ const status = () => {
 
   const userStatuses = getUserStatuses(user?._id);
   const otherStatuses = getOtherStatuses(user?._id);
-  console.log(statuses);
 
   useEffect(() => {
     fetchStatuses();
@@ -84,7 +83,7 @@ const status = () => {
     try {
       await createStatus({
         content: newStatus,
-        file: selectedFile,
+        media: selectedFile,
       });
       setNewStatus("");
       setSelectedFile(null);

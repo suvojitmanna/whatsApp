@@ -54,7 +54,6 @@ const useStatusStore = create((set, get) => ({
     set({ loading: true, error: null });
     try {
       const { data } = await axiosInstance.get("/status");
-      console.log("API DATA:", data);
       set({ statuses: data.data || [], loading: false });
     } catch (error) {
       console.log("error fetched status", error);
@@ -162,7 +161,7 @@ const useStatusStore = create((set, get) => ({
 
       acc[statusUserId].statuses.push({
         id: status._id,
-        media: status.content,
+        media: status.mediaUrl,
         contentType: status.contentType,
         timeStamp: status.createdAt,
         viewers: status.viewers,
