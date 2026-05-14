@@ -16,10 +16,10 @@ A scalable real-time chat application inspired by WhatsApp, built with MERN + So
 
 ✨ Core Highlights <br>
 ⚡ Real-time bi-directional messaging <br>
-🟢 Live user presence tracking
-🔐 Secure authentication (JWT)
-💬 Modern WhatsApp-like UI
-📡 Event-driven architecture
+🟢 Live user presence tracking <br>
+🔐 Secure authentication (JWT) <br>
+💬 Modern WhatsApp-like UI <br>
+📡 Event-driven architecture <br>
 🧱 MERN Stack
 <p align="center"> <img src="https://skillicons.dev/icons?i=mongodb,express,react,nodejs" /> </p>
 🧠 System Design (High-Level)
@@ -44,16 +44,16 @@ sequenceDiagram
     Server->>Socket: Emit Event
     Socket->>FrontendB: Receive Message
     FrontendB->>UserB: Display Message
-🔥 Features
-💬 Messaging
-Instant message delivery (Socket.IO)
-Typing indicators (optional future)
-Read receipts (extendable)
-🧑‍🤝‍🧑 User System
-JWT Authentication
-Online/offline presence
-User session handling
-🎨 UI/UX
+🔥 Features <br>
+💬 Messaging <br>
+Instant message delivery (Socket.IO)<br>
+Typing indicators (optional future) <br>
+Read receipts (extendable) <br>
+🧑‍🤝‍🧑 User System <br>
+JWT Authentication <br>
+Online/offline presence <br>
+User session handling <br>
+🎨 UI/UX <br>
 WhatsApp-inspired interface
 Responsive design
 Smooth chat experience
@@ -71,6 +71,40 @@ OBS Studio
 <p align="center"> <img src="https://github-readme-activity-graph.vercel.app/graph?username=suvojitmanna&theme=react-dark&hide_border=true&area=true"/> </p>
 🏆 Achievements
 <p align="center"> <img src="https://github-profile-trophy.vercel.app/?username=suvojitmanna&theme=onedark&no-frame=true&margin-w=10"/> </p>
+
+🧱 Architecture Diagram
+
+```mermaid
+graph TD
+    A[👤 User Browser] --> B[⚛️ React Frontend]
+    B -->|REST API| C[🟢 Express.js Backend]
+    C --> D[(🍃 MongoDB Database)]
+    C --> E[⚡ Socket.IO Server]
+    E -->|Real-time Events| B
+🖥️ Frontend Architecture
+
+flowchart LR
+    UI[UI Components] --> Pages[React Pages]
+    Pages --> Store[Redux / Context]
+    Store --> API[Axios API Layer]
+    Store --> Socket[Socket.IO Client]
+    API --> Backend[Express API]
+    Socket --> Realtime[Socket.IO Server]
+
+🛠️ Backend Architecture
+
+flowchart TD
+    Client[Frontend Client] --> Routes[Express Routes]
+    Routes --> Controllers[Controllers]
+    Controllers --> Models[MongoDB Models]
+    Models --> DB[(MongoDB)]
+
+    Controllers --> Auth[JWT Middleware]
+    Controllers --> Socket[Socket.IO Events]
+
+    Socket --> OnlineUsers[Online Users Map]
+    Socket --> Messages[Real-time Messaging]
+
 🧩 Project Structure
 client/
  ├── components/
@@ -106,13 +140,13 @@ POST	/api/auth/register	Register
 POST	/api/auth/login	Login
 GET	/api/messages	Fetch messages
 POST	/api/messages	Send message
-🚀 Future Enhancements
-📞 Voice & Video Calling (WebRTC)
-📎 File/Image Sharing
-👥 Group Chats
-🔔 Push Notifications
-🌐 Multi-device sync
-🤝 Contributing
+🚀 Future Enhancements <br>
+📞 Voice & Video Calling (WebRTC) <br>
+📎 File/Image Sharing <br>
+👥 Group Chats <br>
+🔔 Push Notifications <br>
+🌐 Multi-device sync <br>
+🤝 Contributing <br>
 git checkout -b feature-name
 git commit -m "Add feature"
 git push origin feature-name
@@ -120,9 +154,9 @@ git push origin feature-name
 
 If you like this project:
 
-⭐ Star the repo
-🍴 Fork it
-📢 Share it
+⭐ Star the repo <br>
+🍴 Fork it <br>
+📢 Share it <br>
 
 👨‍💻 Author
 
