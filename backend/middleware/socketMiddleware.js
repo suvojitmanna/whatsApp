@@ -22,8 +22,6 @@ const socketMiddleware = (socket, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     socket.user = decoded;
 
-    console.log("Socket User:", socket.user);
-
     next();
   } catch (error) {
     return next(new Error("Invalid or expired token"));

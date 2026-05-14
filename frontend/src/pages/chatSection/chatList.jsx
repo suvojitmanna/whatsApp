@@ -73,7 +73,6 @@ const ChatList = ({ contacts }) => {
         </div>
       </div>
       <div className="overflow-y-auto h-[calc(100vh-120px)]">
-
         {filteredContact.length === 0 ? (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -151,10 +150,12 @@ const ChatList = ({ contacts }) => {
                   </p>
                   {contact?.conversation &&
                     contact?.conversation?.unreadCount > 0 &&
-                    contact?.conversation?.lastMessage?.receiver ===
-                      user?._id && (
+                    contact?.conversation?.lastMessage?.receiver?._id?.toString() ===
+                      user?._id?.toString() && (
                       <p
-                        className={`text-sm font-semibold w-6 h-6 flex items-center justify-center bg-yellow-500 ${theme === "dark" ? "text-gray-800" : "text-gray-500"} truncate rounded-full`}
+                        className={`text-sm font-semibold w-6 h-6 flex items-center justify-center bg-yellow-500 ${
+                          theme === "dark" ? "text-gray-800" : "text-gray-500"
+                        } truncate rounded-full`}
                       >
                         {contact?.conversation?.unreadCount}
                       </p>
