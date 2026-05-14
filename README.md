@@ -58,7 +58,8 @@ WhatsApp-inspired interface
 Responsive design
 Smooth chat experience
 🖼 Demo Preview (Add Your GIF Here)
-<p align="center"> <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExplaceholder/giphy.gif" width="700"/> </p>
+<p align="center"> <img width="1919" height="914" alt="image" src="https://github.com/user-attachments/assets/f51b131c-e1de-496a-9e30-e941f7987bcd" />
+ </p>
 
 👉 Replace this with your real app recording using:
 
