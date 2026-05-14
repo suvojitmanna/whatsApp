@@ -14,8 +14,8 @@
 
 A scalable real-time chat application inspired by WhatsApp, built with MERN + Socket.IO, enabling seamless communication with instant updates.
 
-✨ Core Highlights \n
-⚡ Real-time bi-directional messaging
+✨ Core Highlights <br>
+⚡ Real-time bi-directional messaging <br>
 🟢 Live user presence tracking
 🔐 Secure authentication (JWT)
 💬 Modern WhatsApp-like UI
