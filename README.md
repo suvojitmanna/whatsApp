@@ -81,8 +81,11 @@ graph TD
     C --> D[(🍃 MongoDB Database)]
     C --> E[⚡ Socket.IO Server]
     E -->|Real-time Events| B
-🖥️ Frontend Architecture
+```
 
+## 🖥️ Frontend Architecture
+
+```mermaid
 flowchart LR
     UI[UI Components] --> Pages[React Pages]
     Pages --> Store[Redux / Context]
@@ -90,9 +93,10 @@ flowchart LR
     Store --> Socket[Socket.IO Client]
     API --> Backend[Express API]
     Socket --> Realtime[Socket.IO Server]
+```
 
-🛠️ Backend Architecture
-
+## 🛠️ Backend Architecture
+```mermaid
 flowchart TD
     Client[Frontend Client] --> Routes[Express Routes]
     Routes --> Controllers[Controllers]
@@ -104,8 +108,9 @@ flowchart TD
 
     Socket --> OnlineUsers[Online Users Map]
     Socket --> Messages[Real-time Messaging]
+```
 
-🧩 Project Structure
+## 🧩 Project Structure
 client/
  ├── components/
  ├── pages/
