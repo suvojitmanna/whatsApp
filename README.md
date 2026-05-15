@@ -144,7 +144,7 @@ Method	Endpoint	Description
 POST	/api/auth/register	Register
 POST	/api/auth/login	Login
 GET	/api/messages	Fetch messages
-POST	/api/messages	Send message
+POST	/api/messages	Send message</br>
 🚀 Future Enhancements <br>
 📞 Voice & Video Calling (WebRTC) <br>
 📎 File/Image Sharing <br>
